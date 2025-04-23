@@ -10,6 +10,8 @@ import fs from "fs";
 import AdmZip from "adm-zip";
 import path from "path";
 import { parse } from "csv-parse/sync";
+import os from "os";
+
 
 
 dotenv.config();
@@ -20,7 +22,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const VIEWS_DIR = path.join(__dirname, "views");
 const PARTIALS_DIR = path.join(VIEWS_DIR, "partials");
-
+const upload = multer({
+    dest: os.tmpdir() // Safe writable temp dir, e.g., /tmp
+});
 app.engine("html", engine({ extname: ".html", defaultLayout: false, partialsDir: PARTIALS_DIR }));
 app.set("view engine", "html");
 app.set("views", VIEWS_DIR);
@@ -29,7 +33,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "public")));
 // ✅ Ensure the POIs table exists
 // ✅ Ensure the Users & POIs Table Exist
-const upload = multer({ dest: "uploads/" });
 async function setupDB() {
     console.log("Starting DB...");
     try {
@@ -74,13 +77,15 @@ app.get("/", async (req, res) => {
 app.get("/admin", async (req, res) => {
     console.log("/admin");
     res.render("admin");
-})
+});
 app.post("/upload-gtfs", upload.single("gtfsFile"), async (req, res) => {
     if (!req.file) return res.status(400).send("No GTFS file uploaded.");
+
     const zipPath = req.file.path;
     const originalName = req.file.originalname;
 
     try {
+        // Read the zip from the temp location
         const zip = new AdmZip(zipPath);
         const zipEntries = zip.getEntries();
 
@@ -88,22 +93,26 @@ app.post("/upload-gtfs", upload.single("gtfsFile"), async (req, res) => {
             const name = entry.entryName;
             const content = entry.getData().toString("utf-8");
 
-            // Parse and insert each .txt
             if (name === "agency.txt") {
-                const records = parse(content, {columns: true, skip_empty_lines: true});
+                const records = parse(content, { columns: true, skip_empty_lines: true });
                 for (const row of records) {
                     await sql`
-                        INSERT INTO agency (agency_id, agency_name, agency_url, agency_timezone,
-                                            agency_lang, agency_phone)
-                        VALUES (${row.agency_id || "default"},
-                                ${row.agency_name},
-                                ${row.agency_url},
-                                ${row.agency_timezone},
-                                ${row.agency_lang || null},
-                                ${row.agency_phone || null}) ON CONFLICT (agency_id) DO NOTHING;
+                        INSERT INTO agency (
+                            agency_id, agency_name, agency_url, agency_timezone,
+                            agency_lang, agency_phone
+                        ) VALUES (
+                            ${row.agency_id || "default"},
+                            ${row.agency_name},
+                            ${row.agency_url},
+                            ${row.agency_timezone},
+                            ${row.agency_lang || null},
+                            ${row.agency_phone || null}
+                        ) ON CONFLICT (agency_id) DO NOTHING;
                     `;
                 }
             }
+
+            // Add logic for routes.txt, stops.txt, etc.
         }
         await sql`
             INSERT INTO gtfs_uploads(filename)
