@@ -35,8 +35,6 @@ async function setupDB() {
 setupDB();
 
 
-track('My Event', {}, { flags: ['summer-sale'] });
-// HOME ROUTE
 app.get("/", async (req, res) => {
     console.log("HELLO WORLD");
     res.render("index");
