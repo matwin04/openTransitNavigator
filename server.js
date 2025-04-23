@@ -39,7 +39,6 @@ app.get("/", async (req, res) => {
     console.log("HELLO WORLD");
     res.render("index");
 });
-app.get("")
 
 if (!process.env.VERCEL && !process.env.NOW_REGION) {
     const PORT = process.env.PORT || 8088;
