@@ -38,21 +38,21 @@ async function setupDB() {
     try {
         // custom app tables
         await sql`
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(50) NOT NULL,
-                email VARCHAR(100) UNIQUE NOT NULL,
-                password_hash TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )`;
-        // GTFS Tables
-        await sql`
             CREATE TABLE IF NOT EXISTS gtfs_uploads (
                 id SERIAL PRIMARY KEY,
                 filename TEXT NOT NULL,
                 uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `;
+            )`;
+        await sql`
+            CREATE TABLE IF NOT EXISTS agency (
+                agency_id TEXT PRIMARY KEY,
+                gtfs_id INTEGER REFERENCES gtfs_uploads(id),
+                agency_name TEXT NOT NULL,
+                agency_url TEXT NOT NULL,
+                agency_timezone TEXT NOT NULL,
+                agency_lang TEXT,
+                agency_phone TEXT
+            )`;
         await sql`
             CREATE TABLE IF NOT EXISTS agency (
                 agency_id SERIAL TEXT PRIMARY KEY,
