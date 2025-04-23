@@ -52,7 +52,7 @@ async function setupDB() {
                 agency_timezone TEXT NOT NULL,
                 agency_lang TEXT,
                 agency_phone TEXT
-            )`;
+                )`;
         await sql`
             CREATE TABLE IF NOT EXISTS agency (
                 agency_id SERIAL TEXT PRIMARY KEY,
