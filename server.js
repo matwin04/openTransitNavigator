@@ -85,23 +85,29 @@ app.post("/upload-gtfs", upload.single("gtfsFile"), async (req, res) => {
     const originalName = req.file.originalname;
 
     try {
-        // Read the zip from the temp location
+        // Step 1: Log upload and get gtfs_id
+        const uploadResult = await sql`
+            INSERT INTO gtfs_uploads (filename)
+            VALUES (${originalName})
+            RETURNING id
+        `;
+        const gtfs_id = uploadResult[0].id;
+        // Step 2: Extract and parse zip
         const zip = new AdmZip(req.file.path);
         const zipEntries = zip.getEntries();
-
         for (const entry of zipEntries) {
             const name = entry.entryName;
             const content = entry.getData().toString("utf-8");
-
             if (name === "agency.txt") {
                 const records = parse(content, { columns: true, skip_empty_lines: true });
                 for (const row of records) {
                     await sql`
                         INSERT INTO agency (
-                            agency_id, agency_name, agency_url, agency_timezone,
+                            agency_id, gtfs_id, agency_name, agency_url, agency_timezone,
                             agency_lang, agency_phone
                         ) VALUES (
-                            ${row.agency_id || "default"},
+                            ${row.agency_id},
+                            ${gtfs_id},
                             ${row.agency_name},
                             ${row.agency_url},
                             ${row.agency_timezone},
@@ -112,18 +118,15 @@ app.post("/upload-gtfs", upload.single("gtfsFile"), async (req, res) => {
                 }
             }
 
-            // Add logic for routes.txt, stops.txt, etc.
+            // Add similar logic for routes.txt, stops.txt, etc., using gtfs_id
         }
-        await sql`
-            INSERT INTO gtfs_uploads(filename)
-            VALUES (${originalName})
-        `;
+
         fs.unlinkSync(zipPath);
         res.redirect("/admin");
-        console.log(req.file.path);
+        console.log("Processed and deleted:", req.file.path);
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send("GTFS IMPORT FAILED" + error.message);
+        console.error("❌ GTFS import failed:", error.message);
+        res.status(500).send("GTFS IMPORT FAILED: " + error.message);
     }
 });
 
