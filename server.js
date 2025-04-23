@@ -24,15 +24,15 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 // ✅ Ensure the POIs table exists
 // ✅ Ensure the Users & POIs Table Exist
 
-async function setupDB() {
+/*async function setupDB() {
     console.log("Starting DB...");
     try {
         console.log("✅ Users & POIs tables ready");
     } catch (err) {
         console.error("❌ Database setup failed:", err);
     }
-}
-setupDB();
+}*/
+//setupDB();
 
 
 app.get("/", async (req, res) => {
