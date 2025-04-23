@@ -86,7 +86,7 @@ app.post("/upload-gtfs", upload.single("gtfsFile"), async (req, res) => {
 
     try {
         // Read the zip from the temp location
-        const zip = new AdmZip(zipPath);
+        const zip = new AdmZip(req.file.path);
         const zipEntries = zip.getEntries();
 
         for (const entry of zipEntries) {
@@ -123,7 +123,7 @@ app.post("/upload-gtfs", upload.single("gtfsFile"), async (req, res) => {
         console.log(req.file.path);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send("GTFS IMPORT FAILED");
+        res.status(500).send("GTFS IMPORT FAILED" + error.message);
     }
 });
 
