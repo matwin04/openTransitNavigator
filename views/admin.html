@@ -8,10 +8,8 @@
         <h1>Admin Page</h1>
 
         <hr />
-
-        <h2>Current GTFS Sources</h2>
-        <h2>Current GTFS Sources</h2>
         <h2>GTFS Upload History</h2>
+        <table id="ad"
         <table id="uploads">
             <thead>
             <tr>
@@ -30,6 +28,8 @@
             {{/each}}
             </tbody>
         </table>
+
+
         <h2>Upload GTFS ZIP File</h2>
         <form action="/admin/upload" method="post" enctype="multipart/form-data">
             <input type="file" name="gtfsZip" accept=".zip" required />

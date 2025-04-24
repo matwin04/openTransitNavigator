@@ -54,19 +54,13 @@ async function handleGtfsUpload(filePath, originalName) {
     const fileBuffer = fs.readFileSync(filePath);
     const fileHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
 
-    const existing = await sql`
-        SELECT * FROM gtfs_uploads WHERE filehash = ${fileHash}
-    `;
+    const existing = await sql`SELECT * FROM gtfs_uploads WHERE filehash = ${fileHash}`;
     if (existing.length > 0) {
         return { success: false, message: "Duplicate GTFS upload." };
     }
 
     const zip = new AdmZip(filePath);
     const zipEntries = zip.getEntries();
-    const agencyEntry = zipEntries.find(entry => entry.entryName === "agency.txt");
-    if (!agencyEntry) return { success: false, message: "No agency.txt found in GTFS." };
-
-    const agencyData = parse(agencyEntry.getData().toString(), { columns: true, skip_empty_lines: true });
 
     const result = await sql`
         INSERT INTO gtfs_uploads (filename, filehash)
@@ -74,13 +68,44 @@ async function handleGtfsUpload(filePath, originalName) {
         RETURNING id
     `;
     const uploadId = result[0].id;
+    // Helper function to parse and insert
+    const parseAndInsert = async (entryName, parseFunc) => {
+        const entry = zipEntries.find(e => e.entryName === entryName);
+        if (entry) {
+            const data = parse(entry.getData().toString(), { columns: true, skip_empty_lines: true });
+            await parseFunc(data, uploadId);
+        }
+    };
 
-    for (const agency of agencyData) {
-        await sql`
-            INSERT INTO agencies (agency_id, agency_name, agency_url, agency_timezone, gtfs_upload_id)
-            VALUES (${agency.agency_id}, ${agency.agency_name}, ${agency.agency_url}, ${agency.agency_timezone}, ${uploadId})
-        `;
-    }
+    // Insert Agencies
+    await parseAndInsert("agency.txt", async (data, uploadId) => {
+        for (const row of data) {
+            await sql`
+                INSERT INTO agencies (agency_id, agency_name, agency_url, agency_timezone, gtfs_upload_id)
+                VALUES (${row.agency_id}, ${row.agency_name}, ${row.agency_url}, ${row.agency_timezone}, ${uploadId})
+            `;
+        }
+    });
+
+    // Insert Routes
+    await parseAndInsert("routes.txt", async (data, uploadId) => {
+        for (const row of data) {
+            await sql`
+                INSERT INTO routes (route_id, route_short_name, route_long_name, route_type, gtfs_upload_id)
+                VALUES (${row.route_id}, ${row.route_short_name}, ${row.route_long_name}, ${row.route_type}, ${uploadId})
+            `;
+        }
+    });
+
+    // Insert Stops
+    await parseAndInsert("stops.txt", async (data, uploadId) => {
+        for (const row of data) {
+            await sql`
+                INSERT INTO stops (stop_id, stop_name, stop_lat, stop_lon, gtfs_upload_id)
+                VALUES (${row.stop_id}, ${row.stop_name}, ${row.stop_lat}, ${row.stop_lon}, ${uploadId})
+            `;
+        }
+    });
 
     // Repeat for routes.txt, stops.txt, etc.
 
