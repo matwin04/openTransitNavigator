@@ -46,7 +46,8 @@ app.get("/agencies", async (req, res) => {
         console.log(error);
         res.render("error");
     }
-})
+});
+
 app.get("/admin", async (req, res) => {
     try {
         const agencies = await sql`SELECT * FROM agencies ORDER BY id DESC LIMIT 50`;
@@ -61,6 +62,7 @@ app.post("/admin/upload", upload.single("gtfsZip"), async (req, res) => {
     const result = await handleGtfsUpload(req.file.path, req.file.originalname);
     res.render("admin", { message: result.message || "Upload complete", success: result.success });
 });
+
 if (!process.env.VERCEL && !process.env.NOW_REGION) {
     const PORT = process.env.PORT || 8088;
     app.listen(PORT, () => {

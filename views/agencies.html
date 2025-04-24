@@ -16,7 +16,9 @@
         <tbody>
             {{#each agencies}}
             <tr>
-                <td>{{this.id}}</td>
+                <td>
+                    <a href="/routes/{{this.id}}">{{id}}</a>
+                </td>
                 <td>{{this.agency_id}}</td>
             </tr>
             {{/each}}
