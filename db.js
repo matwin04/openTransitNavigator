@@ -89,4 +89,4 @@ async function handleGtfsUpload(filePath, originalName) {
 async function getAgencies() {
     await sql`SELECT * FROM agencies`;
 }
-export { initDB, handleGtfsUpload };
+export { initDB, handleGtfsUpload,getAgencies };
