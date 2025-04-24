@@ -10,30 +10,31 @@
         <hr />
 
         <h2>Current GTFS Sources</h2>
+        <h2>Current GTFS Sources</h2>
         <table id="sources">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Agency Id</th>
-                    <th>Agency Name</th>
-                    <th>Agency Url</th>
-                    <th>Timezone</th>
-                    <th>Language</th>
-                    <th>Phone Number</th>
-                </tr>
+            <tr>
+                <th>ID</th>
+                <th>Agency Id</th>
+                <th>Agency Name</th>
+                <th>Agency Url</th>
+                <th>Timezone</th>
+                <th>Language</th>
+                <th>Phone Number</th>
+            </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>TEST</td>
-                    <td>Metrolink</td>
-                    <td>Metrolink Trains</td>
-                    <td>
-                        <a href="http://metrolinktrains.com">Click Here</a>
-                    </td>
-                    <td>America/Los_Angeles</td>
-                    <td>EN</td>
-                    <td>(800)371-LINK</td>
-                </tr>
+            {{#each agencies}}
+            <tr>
+                <td>{{this.id}}</td>
+                <td>{{this.agency_id}}</td>
+                <td>{{this.agency_name}}</td>
+                <td><a href="{{this.agency_url}}" target="_blank">Click Here</a></td>
+                <td>{{this.agency_timezone}}</td>
+                <td>{{this.agency_lang}}</td>
+                <td>{{this.agency_phone}}</td>
+            </tr>
+            {{/each}}
             </tbody>
         </table>
         <h2>Upload GTFS ZIP File</h2>
