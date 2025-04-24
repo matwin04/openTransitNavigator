@@ -28,6 +28,26 @@ async function initDB() {
         gtfs_upload_id INTEGER REFERENCES gtfs_uploads(id)
     );
     `;
+
+    await sql`
+    CREATE TABLE IF NOT EXISTS routes (
+        id SERIAL PRIMARY KEY,
+        route_id TEXT,
+        route_short_name TEXT,
+        route_long_name TEXT,
+        route_type INTEGER,
+        gtfs_upload_id INTEGER REFERENCES gtfs_uploads(id)
+    );`;
+
+    await sql`
+    CREATE TABLE IF NOT EXISTS stops (
+        id SERIAL PRIMARY KEY,
+        stop_id TEXT,
+        stop_name TEXT,
+        stop_lat DOUBLE PRECISION,
+        stop_lon DOUBLE PRECISION,
+        gtfs_upload_id INTEGER REFERENCES gtfs_uploads(id)
+    );`;
 }
 
 async function handleGtfsUpload(filePath, originalName) {
@@ -66,5 +86,7 @@ async function handleGtfsUpload(filePath, originalName) {
 
     return { success: true, uploadId };
 }
-
+async function getAgencies() {
+    await sql`SELECT * FROM agencies`;
+}
 export { initDB, handleGtfsUpload };

@@ -11,28 +11,21 @@
 
         <h2>Current GTFS Sources</h2>
         <h2>Current GTFS Sources</h2>
-        <table id="sources">
+        <h2>GTFS Upload History</h2>
+        <table id="uploads">
             <thead>
             <tr>
                 <th>ID</th>
-                <th>Agency Id</th>
-                <th>Agency Name</th>
-                <th>Agency Url</th>
-                <th>Timezone</th>
-                <th>Language</th>
-                <th>Phone Number</th>
+                <th>Filename</th>
+                <th>Uploaded At</th>
             </tr>
             </thead>
             <tbody>
-            {{#each agencies}}
+            {{#each uploads}}
             <tr>
                 <td>{{this.id}}</td>
-                <td>{{this.agency_id}}</td>
-                <td>{{this.agency_name}}</td>
-                <td><a href="{{this.agency_url}}" target="_blank">Click Here</a></td>
-                <td>{{this.agency_timezone}}</td>
-                <td>{{this.agency_lang}}</td>
-                <td>{{this.agency_phone}}</td>
+                <td>{{this.filename}}</td>
+                <td>{{this.uploaded_at}}</td>
             </tr>
             {{/each}}
             </tbody>

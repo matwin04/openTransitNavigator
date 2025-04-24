@@ -5,7 +5,7 @@ import { engine } from "express-handlebars";
 import { fileURLToPath } from "url";
 import { track } from '@vercel/analytics/server';
 import multer from "multer";
-import { importGtfs } from "gtfs";
+import {getAgencies, importGtfs} from "gtfs";
 import fs from "fs";
 import AdmZip from "adm-zip";
 import path from "path";
@@ -39,7 +39,8 @@ app.get("/", async (req, res) => {
 });
 app.get("/admin", async (req, res) => {
     console.log("/admin");
-    res.render("admin");
+    const agencies = getAgencies();
+    res.render("admin",{agencies});
 });
 app.post("/admin/upload", upload.single("gtfsZip"), async (req, res) => {
     const result = await handleGtfsUpload(req.file.path, req.file.originalname);
