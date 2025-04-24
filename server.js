@@ -39,9 +39,14 @@ app.get("/", async (req, res) => {
     res.render("index");
 });
 app.get("/admin", async (req, res) => {
-    console.log("/admin");
-    const agencies = await sql`SELECT * FROM agencies ORDER BY id DESC LIMIT 50`;
-    res.render("admin",{agencies});
+    try {
+        const agencies = await sql`SELECT * FROM agencies ORDER BY id DESC LIMIT 50`;
+        const uploads = await sql`SELECT * FROM gtfs_uploads ORDER BY uploaded_at DESC LIMIT 10`;
+        res.render("admin", { agencies, uploads });
+    } catch (err) {
+        console.error("Error loading admin page:", err);
+        res.status(500).send("Internal Server Error: " + err.message);
+    }
 });
 app.post("/admin/upload", upload.single("gtfsZip"), async (req, res) => {
     const result = await handleGtfsUpload(req.file.path, req.file.originalname);
