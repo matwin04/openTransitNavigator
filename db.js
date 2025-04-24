@@ -65,7 +65,7 @@ async function handleGtfsUpload(filePath, originalName) {
     const result = await sql`
         INSERT INTO gtfs_uploads (filename, filehash)
         VALUES (${originalName}, ${fileHash})
-        RETURNING id
+            RETURNING id
     `;
     const uploadId = result[0].id;
     // Helper function to parse and insert
