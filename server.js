@@ -38,6 +38,15 @@ app.get("/", async (req, res) => {
     console.log("HELLO WORLD");
     res.render("index");
 });
+app.get("/agencies", async (req, res) => {
+    try {
+        const agencies = await sql`SELECT * FROM agencies ORDER BY id DESC LIMIT 50`;
+        res.render("agencies", agencies);
+    } catch (error) {
+        console.log(error);
+        res.render("error");
+    }
+})
 app.get("/admin", async (req, res) => {
     try {
         const agencies = await sql`SELECT * FROM agencies ORDER BY id DESC LIMIT 50`;
