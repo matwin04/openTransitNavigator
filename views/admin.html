@@ -38,9 +38,12 @@
             </tbody>
         </table>
         <h2>Upload GTFS ZIP File</h2>
-        <form action="/upload-gtfs" method="post" enctype="multipart/form-data">
-            <input type="file" name="gtfsFile" accept=".zip" required />
-            <button type="submit">Upload</button>
+        <form action="/admin/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="gtfsZip" accept=".zip" required />
+            <button type="submit">Upload GTFS</button>
         </form>
+        {{#if message}}
+        <p>{{message}}</p>
+        {{/if}}
     </body>
 </html>
