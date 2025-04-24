@@ -7,68 +7,74 @@ import path from "path";
 import dotenv from "dotenv";
 dotenv.config();
 
-const sql = postgres(process.env.DATABASE_URL,  { ssl: 'verify-full' });
+const sql = postgres(process.env.DATABASE_URL, { ssl: 'verify-full' });
+
 async function initDB() {
     await sql`
-    CREATE TABLE IF NOT EXISTS gtfs_uploads (
-        id SERIAL PRIMARY KEY,
-        filename TEXT,
-        filehash TEXT UNIQUE,
-        uploaded_at TIMESTAMP DEFAULT NOW()
-    );
-    `;
+        CREATE TABLE IF NOT EXISTS gtfs_uploads (
+            id SERIAL PRIMARY KEY,
+            filename TEXT,
+            filehash TEXT UNIQUE,
+            uploaded_at TIMESTAMP DEFAULT NOW()
+        );`;
 
     await sql`
-    CREATE TABLE IF NOT EXISTS agencies (
-        id SERIAL PRIMARY KEY,
-        agency_id TEXT,
-        agency_name TEXT,
-        agency_url TEXT,
-        agency_timezone TEXT,
-        gtfs_upload_id INTEGER REFERENCES gtfs_uploads(id)
-    );
-    `;
+        CREATE TABLE IF NOT EXISTS agencies (
+            id SERIAL PRIMARY KEY,
+            agency_id TEXT,
+            agency_name TEXT,
+            agency_url TEXT,
+            agency_timezone TEXT,
+            gtfs_upload_id INTEGER REFERENCES gtfs_uploads(id)
+        );`;
 
     await sql`
-    CREATE TABLE IF NOT EXISTS routes (
-        id SERIAL PRIMARY KEY,
-        route_id TEXT,
-        route_short_name TEXT,
-        route_long_name TEXT,
-        route_type INTEGER,
-        gtfs_upload_id INTEGER REFERENCES gtfs_uploads(id)
-    );`;
+        CREATE TABLE IF NOT EXISTS routes (
+            id SERIAL PRIMARY KEY,
+            route_id TEXT,
+            route_short_name TEXT,
+            route_long_name TEXT,
+            route_type INTEGER,
+            gtfs_upload_id INTEGER REFERENCES gtfs_uploads(id)
+        );`;
 
     await sql`
-    CREATE TABLE IF NOT EXISTS stops (
-        id SERIAL PRIMARY KEY,
-        stop_id TEXT,
-        stop_name TEXT,
-        stop_lat DOUBLE PRECISION,
-        stop_lon DOUBLE PRECISION,
-        gtfs_upload_id INTEGER REFERENCES gtfs_uploads(id)
-    );`;
+        CREATE TABLE IF NOT EXISTS stops (
+            id SERIAL PRIMARY KEY,
+            stop_id TEXT,
+            stop_name TEXT,
+            stop_lat DOUBLE PRECISION,
+            stop_lon DOUBLE PRECISION,
+            gtfs_upload_id INTEGER REFERENCES gtfs_uploads(id)
+        );`;
 }
 
 async function handleGtfsUpload(filePath, originalName) {
     const fileBuffer = fs.readFileSync(filePath);
     const fileHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
 
-    const existing = await sql`SELECT * FROM gtfs_uploads WHERE filehash = ${fileHash}`;
+    const existing = await sql`
+        SELECT * FROM gtfs_uploads WHERE filename = ${originalName}
+    `;
+
+    let uploadId;
     if (existing.length > 0) {
-        return { success: false, message: "Duplicate GTFS upload." };
+        uploadId = existing[0].id;
+        await sql`
+            UPDATE gtfs_uploads SET uploaded_at = NOW() WHERE id = ${uploadId}
+        `;
+    } else {
+        const result = await sql`
+            INSERT INTO gtfs_uploads (filename, filehash)
+            VALUES (${originalName}, ${fileHash})
+            RETURNING id
+        `;
+        uploadId = result[0].id;
     }
 
     const zip = new AdmZip(filePath);
     const zipEntries = zip.getEntries();
 
-    const result = await sql`
-        INSERT INTO gtfs_uploads (filename, filehash)
-        VALUES (${originalName}, ${fileHash})
-            RETURNING id
-    `;
-    const uploadId = result[0].id;
-    // Helper function to parse and insert
     const parseAndInsert = async (entryName, parseFunc) => {
         const entry = zipEntries.find(e => e.entryName === entryName);
         if (entry) {
@@ -77,7 +83,6 @@ async function handleGtfsUpload(filePath, originalName) {
         }
     };
 
-    // Insert Agencies
     await parseAndInsert("agency.txt", async (data, uploadId) => {
         for (const row of data) {
             await sql`
@@ -87,7 +92,6 @@ async function handleGtfsUpload(filePath, originalName) {
         }
     });
 
-    // Insert Routes
     await parseAndInsert("routes.txt", async (data, uploadId) => {
         for (const row of data) {
             await sql`
@@ -97,7 +101,6 @@ async function handleGtfsUpload(filePath, originalName) {
         }
     });
 
-    // Insert Stops
     await parseAndInsert("stops.txt", async (data, uploadId) => {
         for (const row of data) {
             await sql`
@@ -107,9 +110,8 @@ async function handleGtfsUpload(filePath, originalName) {
         }
     });
 
-    // Repeat for routes.txt, stops.txt, etc.
-
     return { success: true, uploadId };
 }
+
 
 export { initDB, handleGtfsUpload };
