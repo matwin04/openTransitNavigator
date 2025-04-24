@@ -86,7 +86,5 @@ async function handleGtfsUpload(filePath, originalName) {
 
     return { success: true, uploadId };
 }
-async function getAgencies() {
-    await sql`SELECT * FROM agencies`;
-}
-export { initDB, handleGtfsUpload,getAgencies };
+
+export { initDB, handleGtfsUpload };

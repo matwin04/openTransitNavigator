@@ -16,6 +16,7 @@ await initDB();
 
 
 dotenv.config();
+const sql = postgres(process.env.DATABASE_URL,  { ssl: 'verify-full' });
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,7 +40,7 @@ app.get("/", async (req, res) => {
 });
 app.get("/admin", async (req, res) => {
     console.log("/admin");
-    const agencies = getAgencies();
+    const agencies = await sql`SELECT * FROM agencies ORDER BY id DESC LIMIT 50`;
     res.render("admin",{agencies});
 });
 app.post("/admin/upload", upload.single("gtfsZip"), async (req, res) => {
