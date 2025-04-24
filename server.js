@@ -41,7 +41,7 @@ app.get("/", async (req, res) => {
 app.get("/agencies", async (req, res) => {
     try {
         const agencies = await sql`SELECT * FROM agencies ORDER BY id DESC LIMIT 50`;
-        res.render("agencies", agencies);
+        res.render("agencies", {agencies});
     } catch (error) {
         console.log(error);
         res.render("error");
