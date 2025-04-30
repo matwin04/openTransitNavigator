@@ -6,7 +6,8 @@ import crypto from "crypto";
 import path from "path";
 import dotenv from "dotenv";
 dotenv.config();
-
+console.log("DATABASE_URL:", process.env.DATABASE_URL);
+console.log("Attempting to connect in db.js");
 const sql = postgres(process.env.DATABASE_URL, { ssl: 'verify-full' });
 
 async function initDB() {

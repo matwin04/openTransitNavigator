@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Routes</title>
+</head>
+<body>
+<h1>Routes for Agency ID {{agencyId}}</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Route ID</th>
+        <th>Short Name</th>
+        <th>Long Name</th>
+        <th>Route Type</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each routes}}
+    <tr>
+        <td>{{id}}</td>
+        <td>{{route_id}}</td>
+        <td>{{route_short_name}}</td>
+        <td>{{route_long_name}}</td>
+        <td>{{route_type}}</td>
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
+</body>
+</html>

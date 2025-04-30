@@ -16,6 +16,7 @@ await initDB();
 
 
 dotenv.config();
+console.log("DATABASE_URL:", process.env.DATABASE_URL);
 const sql = postgres(process.env.DATABASE_URL,  { ssl: 'verify-full' });
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -45,6 +46,28 @@ app.get("/agencies", async (req, res) => {
     } catch (error) {
         console.log(error);
         res.render("error");
+    }
+});
+app.get("/agencies/:agencyId/routes", async (req, res) => {
+    const agencyId = req.params.agencyId;
+    console.log(agencyId);
+    try {
+        const routes = await sql `SELECT * FROM routes WHERE gtfs_upload_id=${agencyId}`;
+        res.render("routes",{routes,agencyId});
+    } catch (error) {
+        console.error("Error loading agencies routes", error);
+        res.status(500).send( error.message);
+    }
+});
+app.get("/agencies/:agencyId/stops", async (req, res) => {
+    const agencyId = req.params.agencyId;
+    console.log(agencyId);
+    try {
+        const stops = await sql`SELECT * FROM stops WHERE gtfs_upload_id=${agencyId}`;
+        res.render("stops",{stops,agencyId});
+    } catch (error) {
+        console.error("Error loading stops stops", error);
+        res.status(500).send( error.message);
     }
 });
 
