@@ -40,7 +40,7 @@ async function setupDB() {
             )`;
             console.log("created table routes");
         await sql`
-            CREATE TABLE trips
+            CREATE TABLE IF NOT EXISTS trips
             (
                 trip_id      TEXT PRIMARY KEY,
                 route_id     TEXT REFERENCES routes (route_id),

@@ -37,7 +37,6 @@ app.use(
     })
 );
 // DB Function
-
 setupDB();
 // Routes
 app.get("/", (req, res) => {
@@ -45,9 +44,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/cameras", async (req, res) => {
-    const cameras = await sql`SELECT * FROM cameras`;
-    res.render("cameras", { title: "Cameras", cameras });
+    const agencies = await sql`SELECT * FROM agencies`;
+    res.render("cameras", { title: "Cameras", agencies });
 });
+app.get("/routes", async (req, res) => {
+    const routes = await sql`SELECT * FROM routes`;
+    res.render("routes", {title:"Routes",routes});
+})
 
 // Start server
 app.listen(PORT, () => {
