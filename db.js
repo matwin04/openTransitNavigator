@@ -16,7 +16,16 @@ async function setupDB() {
                 timezone TEXT,
                 lang TEXT,
                 phone TEXT
-            )`;
+            );
+            CREATE TABLE stops (
+                stop_id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                code TEXT,
+                description TEXT,
+                geom GEOMETRY(POINT,4326) NOT NULL,
+            );
+            `
+
     } catch (error) {
         console.log(error);
     }
