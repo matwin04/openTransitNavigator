@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document id="root_doc">
+    <name>Stations</name>
+    <Style id="icon-1499-000000-labelson">
+      <IconStyle>
+        <color>ff000000</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Style id="icon-1568-F9A825-labelson">
+      <IconStyle>
+        <color>ff25a8f9</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Style id="icon-1716-000000-labelson">
+      <IconStyle>
+        <color>ff000000</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Style id="icon-1739-006064-labelson">
+      <IconStyle>
+        <color>ff646000</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+    <Placemark>
+      <name>Garden Grove</name>
+      <description><![CDATA[description: <br>Station Type: Transfer<br>Line: OC Streetcar]]></description>
+      <styleUrl>#icon-1499-000000-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Transfer</value>
+        </Data>
+        <Data name="Line">
+          <value>OC Streetcar</value>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.9203543,33.7609417,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Fairview</name>
+      <description><![CDATA[description: <br>Station Type: Standard<br>Line: OCS]]></description>
+      <styleUrl>#icon-1739-006064-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Standard</value>
+        </Data>
+        <Data name="Line">
+          <value>OCS</value>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.9038401,33.7509002,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Disneyland</name>
+      <description><![CDATA[description: <br>Station Type: Disneyland<br>Line: Center Line,D]]></description>
+      <styleUrl>#icon-1568-F9A825-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Disneyland</value>
+        </Data>
+        <Data name="Line">
+          <value>Center Line,D</value>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.9153742,33.8093451,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Convention Center</name>
+      <description><![CDATA[description: <br>Station Type: Standard<br>Line: Center Line]]></description>
+      <styleUrl>#icon-1739-006064-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Standard</value>
+        </Data>
+        <Data name="Line">
+          <value>Center Line</value>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.915218,33.7997264,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Lampson / Harbor</name>
+      <description><![CDATA[description: <br>Station Type: Standard<br>Line: Center Line]]></description>
+      <styleUrl>#icon-1739-006064-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Standard</value>
+        </Data>
+        <Data name="Line">
+          <value>Center Line</value>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.9148784,33.7812462,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Lincoln / Harbor</name>
+      <description><![CDATA[description: <br>Station Type: Standard<br>Line: Center Line]]></description>
+      <styleUrl>#icon-1739-006064-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Standard</value>
+        </Data>
+        <Data name="Line">
+          <value>Center Line</value>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.9194564,33.8341457,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Downtown Fullerton</name>
+      <description><![CDATA[description: <br>Station Type: Commuter Rail Transfer<br>Line: ]]></description>
+      <styleUrl>#icon-1716-000000-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Commuter Rail Transfer</value>
+        </Data>
+        <Data name="Line">
+          <value/>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.9242966,33.868897,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Fullerton College</name>
+      <description><![CDATA[description: <br>Station Type: Standard<br>Line: ]]></description>
+      <styleUrl>#icon-1739-006064-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Standard</value>
+        </Data>
+        <Data name="Line">
+          <value/>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.9174534,33.8740207,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>CSUF</name>
+      <description><![CDATA[description: <br>Station Type: Standard<br>Line: ]]></description>
+      <styleUrl>#icon-1739-006064-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Standard</value>
+        </Data>
+        <Data name="Line">
+          <value/>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.8810258,33.8830212,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Brea</name>
+      <description><![CDATA[description: <br>Station Type: Transfer<br>Line: ]]></description>
+      <styleUrl>#icon-1499-000000-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Transfer</value>
+        </Data>
+        <Data name="Line">
+          <value/>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.8807465,33.9215075,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Cal Poly Pomona</name>
+      <description><![CDATA[description: <br>Station Type: Standard<br>Line: ]]></description>
+      <styleUrl>#icon-1739-006064-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Standard</value>
+        </Data>
+        <Data name="Line">
+          <value/>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.8173973,34.0589857,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark>
+      <name>Diamond Bar</name>
+      <description><![CDATA[description: <br>Station Type: Standard<br>Line: ]]></description>
+      <styleUrl>#icon-1739-006064-labelson</styleUrl>
+      <ExtendedData>
+        <Data name="description">
+          <value/>
+        </Data>
+        <Data name="Station Type">
+          <value>Standard</value>
+        </Data>
+        <Data name="Line">
+          <value/>
+        </Data>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.8239513,34.0111034,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark id="Stations.13">
+      <name>Raitt</name>
+      <ExtendedData>
+        <SchemaData>
+          <SimpleData name="Station_Type">Standard</SimpleData>
+        </SchemaData>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.893217858109,33.7479099197777,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark id="Stations.14">
+      <name>Bristol</name>
+      <ExtendedData>
+        <SchemaData>
+          <SimpleData name="Station_Type">Standard</SimpleData>
+        </SchemaData>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.885398003744,33.747959220169,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark id="Stations.15">
+      <name>Flower</name>
+      <ExtendedData>
+        <SchemaData>
+          <SimpleData name="Station_Type">Standard</SimpleData>
+        </SchemaData>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.87662041481,33.7480135638766,0
+        </coordinates>
+      </Point>
+    </Placemark>
+    <Placemark id="Stations.16">
+      <name>Santa Ana Regional Transit Center</name>
+      <ExtendedData>
+        <SchemaData>
+          <SimpleData name="Station_Type">Commuter Rail Transfer</SimpleData>
+          <SimpleData name="Line">OCS</SimpleData>
+        </SchemaData>
+      </ExtendedData>
+      <Point>
+        <coordinates>
+          -117.857301125412,33.7517121124178,0
+        </coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>
