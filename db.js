@@ -9,13 +9,13 @@ async function setupDB() {
     console.log("Database Connected");
     try {
         await sql`
-            CREATE TABLE IF NOT EXISTS cameras (
-                id SERIAL PRIMARY KEY,
-                make TEXT NOT NULL,
-                model TEXT NOT NULL,
-                type TEXT,
-                year TEXT,
-                format TEXT
+            CREATE TABLE agency (
+                agency_id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                url TEXT,
+                timezone TEXT,
+                lang TEXT,
+                phone TEXT
             )`;
     } catch (error) {
         console.log(error);
