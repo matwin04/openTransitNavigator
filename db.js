@@ -7,6 +7,8 @@ async function setupDB() {
     console.log("DB Connected");
     console.log("Database Connected");
     try {
+        await sql`CREATE EXTENSION IF NOT EXISTS postgis`;
+        console.log("PostGIS extension enabled");
         await sql`
             CREATE TABLE IF NOT EXISTS agency (
                 agency_id TEXT PRIMARY KEY,
@@ -46,7 +48,7 @@ async function setupDB() {
                 service_id   TEXT,
                 headsign     TEXT,
                 direction_id INTEGER,
-                shaped_id    TEXT
+                shape_id    TEXT
             )`;
         console.log("created table trips");
 
