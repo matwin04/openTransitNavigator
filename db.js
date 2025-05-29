@@ -22,11 +22,16 @@ async function setupDB() {
         await sql`
             CREATE TABLE IF NOT EXISTS stops (
                 stop_id TEXT PRIMARY KEY,
-                name TEXT NOT NULL,
-                code TEXT,
-                description TEXT,
-                geom GEOMETRY(POINT,4326) NOT NULL
+                stop_code TEXT,
+                stop_name TEXT NOT NULL,
+                stop_desc TEXT,
+                stop_url TEXT,
+                location_type INTEGER DEFAULT 0,     -- 0 = stop/platform, 1 = station
+                parent_station TEXT,                 -- References stop_id of parent station
+                tpis_name TEXT,                      -- Optional: platform ID or TPIS reference
+                geom GEOMETRY(POINT, 4326) NOT NULL  -- Created from stop_lat + stop_lon
             )`;
+
             console.log("created table stops");
         await sql`
             CREATE TABLE IF NOT EXISTS routes (
@@ -51,6 +56,39 @@ async function setupDB() {
                 shape_id    TEXT
             )`;
         console.log("created table trips");
+        await sql`
+            CREATE TABLE IF NOT EXISTS stop_times (
+              trip_id TEXT,
+              arrival_time TEXT,
+              departure_time TEXT,
+              stop_id TEXT,
+              stop_sequence INTEGER,
+              PRIMARY KEY (trip_id, stop_sequence)
+                )`;
+        console.log("✅ Created table: stop_times");
+
+        await sql`
+            CREATE TABLE IF NOT EXISTS calendar (
+                service_id TEXT PRIMARY KEY,
+                monday BOOLEAN,
+                tuesday BOOLEAN,
+                wednesday BOOLEAN,
+                thursday BOOLEAN,
+                friday BOOLEAN,
+                saturday BOOLEAN,
+                sunday BOOLEAN,
+                start_date TEXT,
+                end_date TEXT
+            )`;
+        console.log("✅ Created table: calendar");
+
+        await sql`
+            CREATE TABLE IF NOT EXISTS shapes (
+                shape_id TEXT,
+                pt_sequence INTEGER,
+                geom GEOMETRY(POINT, 4326),
+                PRIMARY KEY (shape_id, pt_sequence)
+            )`;
 
     } catch (error) {
         console.log(error);

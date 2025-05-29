@@ -24,6 +24,7 @@
     "gtfs": "^4.17.2",
     "leaflet-filelayer": "^1.2.0",
     "multer": "^1.4.5-lts.2",
-    "postgres": "^3.4.5"
+    "postgres": "^3.4.5",
+    "vercel": "^42.2.0"
   }
 }

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{{#each stops}}
+<h3>{{stop_name}}</h3>
+<a>{{stop_code}}</a>
+<b>{{lat}}</b>
+<b>{{lon}}</b><br>
+{{/each}}
+
+
+<h1>Upload stops.txt</h1>
+<form action="/stops/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="csv" accept=".txt,.csv" required>
+    <br><br>
+    <button type="submit">Upload Stops File</button>
+</form>
+
+</body>
+</html>
