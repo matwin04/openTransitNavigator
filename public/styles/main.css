@@ -1,0 +1,71 @@
+@font-face {
+    font-family: "Britrln";
+    src: url("/public/fonts/britrln_.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: "Britrln", sans-serif;
+    margin: 0;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    color: #222;
+    line-height: 1.5;
+}
+
+.transit-types {
+    margin-bottom: 2rem;
+    max-width: 300px;
+}
+
+.transit-types table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.transit-types th,
+.transit-types td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.transit-types thead th {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+}
+
+#routes {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#routes th,
+#routes td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+#routes thead th {
+    background-color: #222;
+    color: #fff;
+}
+
+#routes tbody tr:hover {
+    opacity: 0.85;
+    cursor: pointer;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
