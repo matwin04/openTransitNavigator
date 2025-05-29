@@ -101,7 +101,7 @@ app.post("/stops/upload", upload.single("csv"), async (req, res) => {
 app.get("/import/gtfs", async (req, res) => {
     try {
         const logs = await importAllGTFS();
-        res.send(`<h1>GTFS Import Complete</h1><div>${logs.join("<br><br>")}</div>`);
+        res.send(`<h1>✅ GTFS Import Complete</h1><div>${logs.join("<br><br>")}</div>`);
     } catch (err) {
         res.status(500).send("❌ Import failed: " + err.message);
     }
