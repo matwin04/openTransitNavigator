@@ -61,8 +61,39 @@ app.get("/stops", async (req, res) => {
 app.get("/calendar", async (req, res) => {
     const calendar = await sql`SELECT * FROM calendar`;
     res.render("calendar", { title: "Calendar", calendar });
-})
-
+});
+// routes/api.js or similar
+app.get('/api/stops', async (req, res) => {
+    try {
+        const result = await sql`
+      SELECT
+        stop_id,
+        stop_name,
+        stop_code,
+        location_type,
+        parent_station,
+        tpis_name,
+        ST_AsGeoJSON(geom)::json AS geometry
+      FROM stops;
+    `;
+        const features = result.map(row => ({
+            type: "Feature",
+            geometry: row.geometry,
+            properties: {
+                stop_id: row.stop_id,
+                name: row.stop_name,
+                code: row.stop_code,
+                type: row.location_type,
+                parent: row.parent_station,
+                tpis: row.tpis_name
+            }
+        }));
+        res.json({ type: "FeatureCollection", features });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error retrieving stops");
+    }
+});
 // Start server
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
