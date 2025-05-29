@@ -8,7 +8,7 @@ async function setupDB() {
     console.log("DB Connected");
     console.log("Database Connected");
     try {
-        /*await sql`
+        await sql`
             CREATE TABLE IF NOT EXISTS agency (
                 agency_id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -16,7 +16,7 @@ async function setupDB() {
                 timezone TEXT,
                 lang TEXT,
                 phone TEXT
-            )`;*/
+            )`;
             console.log("created table AGENCY");
         await sql`
             CREATE TABLE IF NOT EXISTS stops (
