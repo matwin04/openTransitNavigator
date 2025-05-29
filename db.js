@@ -9,7 +9,7 @@ async function setupDB() {
     console.log("Database Connected");
     try {
         await sql`
-            CREATE TABLE agency (
+            CREATE TABLE IF NOT EXISTS agency (
                 agency_id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
                 url TEXT,
@@ -19,7 +19,7 @@ async function setupDB() {
             )`;
             console.log("created table AGENCY");
         await sql`
-            CREATE TABLE stops (
+            CREATE TABLE IF NOT EXISTS stops (
                 stop_id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
                 code TEXT,
@@ -28,7 +28,7 @@ async function setupDB() {
             )`;
             console.log("created table stops");
         await sql`
-            CREATE TABLE routes (
+            CREATE TABLE IF NOT EXISTS routes (
                 route_id    TEXT PRIMARY KEY,
                 agency_id   TEXT NOT NULL,
                 short_name  TEXT NOT NULL,
