@@ -45,7 +45,7 @@ app.get("/", (req, res) => {
 
 app.get("/agencies", async (req, res) => {
     const agencies = await sql`SELECT * FROM agency`;
-    res.render("cameras", { title: "Cameras", agencies });
+    res.render("agency", { title: "Cameras", agencies });
 });
 app.get("/routes", async (req, res) => {
     const routes = await sql`SELECT * FROM routes`;
