@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+    {{#each routes}}
+    <tr style="background-color: #{{color}}; color: #{{text_color}}">
+        <td>{{route_id}}</td>
+        <td>{{agency_id}}</td>
+        <td>{{short_name}}</td>
+        <td>{{long_name}}</td>
+        <td>{{description}}</td>
+        <td>{{type}}</td>
+        <td>{{color}}</td>
+        <td>{{text_color}}</td>
+    </tr>
+    {{/each}}
+
+</table>
+
+</body>
+</html>
