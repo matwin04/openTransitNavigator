@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 const connectionString = process.env.DATABASE_URL;
 console.log(connectionString)
-const sql = postgres(connectionString);
+const sql = postgres(process.env.DATABASE_URL,  { ssl: 'verify-full' });
 async function setupDB() {
     console.log("DB Connected");
     console.log("Database Connected");
