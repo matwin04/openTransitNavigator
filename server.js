@@ -50,7 +50,7 @@ app.get("/agencies", async (req, res) => {
 app.get("/routes", async (req, res) => {
     const routes = await sql`SELECT * FROM routes`;
     res.render("routes", {title:"Routes",routes});
-})
+});
 
 // Start server
 app.listen(PORT, () => {
