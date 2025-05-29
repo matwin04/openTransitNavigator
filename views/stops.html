@@ -5,12 +5,26 @@
     <title>Title</title>
 </head>
 <body>
-{{#each stops}}
-<h3>{{stop_name}}</h3>
-<a>{{stop_code}}</a>
-<b>{{lat}}</b>
-<b>{{lon}}</b><br>
-{{/each}}
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {{#each stops}}
+    <tr>
+        <td>{{stop_id}}</td>
+        <td>{{stop_name}}</td>
+        <td>{{stop_desc}}</td>
+        <td>{{parent_station}}</td>
+    </tr>
+    </tbody>
+    {{/each}}
+</table>
+
 
 
 <h1>Upload stops.txt</h1>

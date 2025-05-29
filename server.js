@@ -56,49 +56,12 @@ app.get("/routes", async (req, res) => {
 });
 app.get("/stops", async (req, res) => {
     const stops = await sql`SELECT *,ST_X(geom) AS lon,ST_Y(geom) AS lat FROM stops`;
-    console.log(stops);
     res.render("stops", {title:"Stops",stops});
 });
-app.post("/stops/upload", upload.single("csv"), async (req, res) => {
-    if (!req.file) return res.status(400).send("No file uploaded");
-
-    try {
-        const fileContent = req.file.buffer.toString("utf-8");
-        const records = parse(fileContent, {
-            columns: true,
-            skip_empty_lines: true,
-            trim: true
-        });
-
-        for (const row of records) {
-            const {
-                stop_id, stop_code, stop_name, stop_desc, stop_lat,
-                stop_lon, stop_url, location_type, parent_station, tpis_name
-            } = row;
-
-            if (!stop_id || !stop_name || !stop_lat || !stop_lon) continue;
-
-            await sql`
-                INSERT INTO stops (
-                    stop_id, stop_code, stop_name, stop_desc, stop_url,
-                    location_type, parent_station, tpis_name, geom
-                )
-                VALUES (
-                    ${stop_id}, ${stop_code}, ${stop_name}, ${stop_desc}, ${stop_url || null},
-                    ${location_type || 0}, ${parent_station || null}, ${tpis_name || null},
-                    ST_SetSRID(ST_MakePoint(${parseFloat(stop_lon)}, ${parseFloat(stop_lat)}), 4326)
-                )
-                ON CONFLICT (stop_id) DO NOTHING;
-            `;
-        }
-
-        res.send("✅ stops.txt uploaded successfully!");
-    } catch (err) {
-        console.error("❌ Error processing stops.txt:", err);
-        res.status(500).send("Error processing file.");
-    }
-});
-
+app.get("/calendar", async (req, res) => {
+    const calendar = await sql`SELECT * FROM calendar`;
+    res.render("calendar", { title: "Calendar", calendar });
+})
 
 // Start server
 app.listen(PORT, () => {
