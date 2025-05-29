@@ -17,6 +17,7 @@ async function setupDB() {
                 lang TEXT,
                 phone TEXT
             )`;
+            console.log("created table AGENCY");
         await sql`
             CREATE TABLE stops (
                 stop_id TEXT PRIMARY KEY,
@@ -25,6 +26,7 @@ async function setupDB() {
                 description TEXT,
                 geom GEOMETRY(POINT,4326) NOT NULL
             )`;
+            console.log("created table stops");
         await sql`
             CREATE TABLE routes (
                 route_id    TEXT PRIMARY KEY,
@@ -36,6 +38,18 @@ async function setupDB() {
                 color       TEXT,
                 text_color  TEXT
             )`;
+            console.log("created table routes");
+        await sql`
+            CREATE TABLE trips
+            (
+                trip_id      TEXT PRIMARY KEY,
+                route_id     TEXT REFERENCES routes (route_id),
+                service_id   TEXT,
+                headsign     TEXT,
+                direction_id INTEGER,
+                shaped_id    TEXT
+            )`;
+        console.log("created table trips");
 
     } catch (error) {
         console.log(error);
