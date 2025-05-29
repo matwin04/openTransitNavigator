@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
     res.render("index", { title: "Thing Token" });
 });
 
-app.get("/cameras", async (req, res) => {
+app.get("/agencies", async (req, res) => {
     const agencies = await sql`SELECT * FROM agencies`;
     res.render("cameras", { title: "Cameras", agencies });
 });
