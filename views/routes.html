@@ -6,6 +6,20 @@
 </head>
 <body>
 <table>
+    <thead>
+
+    </thead>
+        <tr>
+            <th>Route</th>
+            <th>Agency</th>
+            <th>Short Name</th>
+            <th>Long Name</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Color</th>
+            <th>Text Color</th>
+        </tr>
+    <tbody>
     {{#each routes}}
     <tr style="background-color: #{{color}}; color: #{{text_color}}">
         <td>{{route_id}}</td>
@@ -18,8 +32,11 @@
         <td>{{text_color}}</td>
     </tr>
     {{/each}}
-
+    </tbody>
 </table>
-
+<script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>s
 </body>
 </html>
