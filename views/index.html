@@ -17,33 +17,59 @@
         attribution: "© OpenStreetMap"
     }).addTo(map);
 
-    fetch("/api/stops")
-        .then(res => res.json())
-        .then(data => {
-            L.geoJSON(data, {
-                pointToLayer: (feature, latlng) => {
-                    let color;
-                    switch (feature.properties.type) {
-                        case 1: color = "blue"; break;    // station
-                        case 2: color = "gray"; break;    // entrance
-                        default: color = "green";         // platform/stop
-                    }
+    // Function to fetch and render stops
+    function loadStops() {
+        fetch("/api/stops")
+            .then(res => res.json())
+            .then(data => {
+                const stopLayer = L.geoJSON(data, {
+                    pointToLayer: (feature, latlng) => {
+                        let color;
+                        switch (feature.properties.type) {
+                            case 1: color = "blue"; break;    // station
+                            case 2: color = "gray"; break;    // entrance
+                            default: color = "green";         // platform/stop
+                        }
 
-                    return L.circleMarker(latlng, {
-                        radius: 6,
-                        fillColor: color,
-                        color: "#000",
-                        weight: 1,
-                        fillOpacity: 0.8
-                    }).bindPopup(`
+                        return L.circleMarker(latlng, {
+                            radius: 6,
+                            fillColor: color,
+                            color: "#000",
+                            weight: 1,
+                            fillOpacity: 0.8
+                        }).bindPopup(`
               <strong>${feature.properties.name}</strong><br/>
               Type: ${["Platform", "Station", "Entrance"][feature.properties.type] || "Unknown"}<br/>
               Code: ${feature.properties.code || "N/A"}<br/>
               TPIS: ${feature.properties.tpis || "—"}
             `);
-                }
-            }).addTo(map);
-        });
+                    }
+                });
+                stopLayer.addTo(map);
+            });
+    }
+
+    // Function to fetch and render shapes
+    function loadShapes() {
+        fetch("/api/shapes")
+            .then(res => res.json())
+            .then(data => {
+                const shapeLayer = L.geoJSON(data, {
+                    style: {
+                        color: "#FF0000",
+                        weight: 3
+                    },
+                    onEachFeature: (feature, layer) => {
+                        layer.bindPopup(`Shape ID: ${feature.properties.shape_id}`);
+                    }
+                });
+                shapeLayer.addTo(map);
+            });
+    }
+
+    // Load both layers
+    loadStops();
+    loadShapes();
 </script>
 </body>
 </html>
