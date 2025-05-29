@@ -94,6 +94,26 @@ app.get('/api/stops', async (req, res) => {
         res.status(500).send("Error retrieving stops");
     }
 });
+app.get("/api/shapes", async (req, res) => {
+    try {
+        const shapes = await sql`
+      SELECT shape_id, ST_AsGeoJSON(ST_MakeLine(geom ORDER BY pt_sequence))::json AS geometry
+      FROM shapes
+      GROUP BY shape_id
+    `;
+
+        const features = shapes.map(row => ({
+            type: "Feature",
+            geometry: row.geometry,
+            properties: { shape_id: row.shape_id }
+        }));
+
+        res.json({ type: "FeatureCollection", features });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Failed to load shapes");
+    }
+});
 // Start server
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
