@@ -36,7 +36,6 @@
                             fillColor: color,
                             color: "#000",
                             weight: 1,
-                            fillOpacity: 0.8
                         }).bindPopup(`
               <strong>${feature.properties.name}</strong><br/>
               Type: ${["Platform", "Station", "Entrance"][feature.properties.type] || "Unknown"}<br/>
@@ -68,8 +67,8 @@
     }
 
     // Load both layers
-    loadStops();
     loadShapes();
+    loadStops();
 </script>
 </body>
 </html>
