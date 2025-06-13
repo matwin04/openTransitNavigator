@@ -1,75 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Transit Stops Map</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <meta charset="utf-8" />
+    <title>LA Transit Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
     <style>
-        #map { height: 100vh; }
+        #map { height: 100vh; width: 100%; }
     </style>
 </head>
 <body>
 <div id="map"></div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    const map = L.map("map").setView([33.77, -118.19], 14);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap"
-    }).addTo(map);
-
-    // Function to fetch and render stops
-    function loadStops() {
-        fetch("/api/stops")
-            .then(res => res.json())
-            .then(data => {
-                const stopLayer = L.geoJSON(data, {
-                    pointToLayer: (feature, latlng) => {
-                        let color;
-                        switch (feature.properties.type) {
-                            case 1: color = "blue"; break;    // station
-                            case 2: color = "gray"; break;    // entrance
-                            default: color = "green";         // platform/stop
-                        }
-
-                        return L.circleMarker(latlng, {
-                            radius: 6,
-                            fillColor: color,
-                            color: "#000",
-                            weight: 1,
-                            fillOpacity: 0.8
-                        }).bindPopup(`
-              <strong>${feature.properties.name}</strong><br/>
-              Type: ${["Platform", "Station", "Entrance"][feature.properties.type] || "Unknown"}<br/>
-              Code: ${feature.properties.code || "N/A"}<br/>
-              TPIS: ${feature.properties.tpis || "—"}
-            `);
-                    }
-                });
-                stopLayer.addTo(map);
-            });
-    }
-
-    // Function to fetch and render shapes
-    function loadShapes() {
-        fetch("/api/shapes")
-            .then(res => res.json())
-            .then(data => {
-                const shapeLayer = L.geoJSON(data, {
-                    style: {
-                        color: "#FF0000",
-                        weight: 3
-                    },
-                    onEachFeature: (feature, layer) => {
-                        layer.bindPopup(`Shape ID: ${feature.properties.shape_id}`);
-                    }
-                });
-                shapeLayer.addTo(map);
-            });
-    }
-
-    // Load both layers
-    loadStops();
-    loadShapes();
-</script>
+<script src="/public/scripts/map.js"></script>
 </body>
-</html>
+</html>s

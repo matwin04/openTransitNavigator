@@ -1,16 +1,12 @@
 import express from "express";
 import path from "path";
-import { parse } from "csv-parse/sync";
 import fs from "fs";
 import multer from "multer";
 import dotenv from "dotenv";
 import { engine } from "express-handlebars";
-import session from 'express-session';
 import { fileURLToPath } from "url";
-import { sql, setupDB } from "./db.js";
+import fetch from "node-fetch"; // required to make TransitLand API requests
 
-import {routes} from "gtfs/models";
-//import bcrypt from "bcrypt";
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -23,6 +19,8 @@ const PUBLIC_DIR = path.join(__dirname, "public");
 const upload = multer();
 const PORT = process.env.PORT || 3003;
 
+const API_KEY = process.env.API_KEY;
+const BASE_URL = "https://www.transit.land/api/v2/rest";
 // Template engine
 app.engine("html", engine({ extname: ".html", defaultLayout: false, partialsDir: PARTIALS_DIR }));
 app.set("view engine", "html");
@@ -32,86 +30,63 @@ app.set("views", VIEWS_DIR);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static(PUBLIC_DIR));
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || "thing-secret",
-        resave: false,
-        saveUninitialized: true,
-    })
-);
-// DB Function
-setupDB();
-// Routes
-app.get("/", (req, res) => {
-    res.render("index", { title: "Thing Token" });
-});
 
-app.get("/agencies", async (req, res) => {
-    const agencies = await sql`SELECT * FROM agency`;
-    res.render("agencies", { title: "Cameras", agencies });
+// Views
+app.get("/", (req, res) => {
+    res.render("index", { title: "Open Transit Navigator" });
 });
-app.get("/routes", async (req, res) => {
-    const routes = await sql`SELECT * FROM routes`;
-    res.render("routes", {title:"Routes",routes});
-});
-app.get("/stops", async (req, res) => {
-    const stops = await sql`SELECT *,ST_X(geom) AS lon,ST_Y(geom) AS lat FROM stops`;
-    res.render("stops", {title:"Stops",stops});
-});
-app.get("/calendar", async (req, res) => {
-    const calendar = await sql`SELECT * FROM calendar`;
-    res.render("calendar", { title: "Calendar", calendar });
-});
-// routes/api.js or similar
-app.get('/api/stops', async (req, res) => {
+app.get("/api/stations", async (req, res) => {
+    const apiKey = API_KEY || "WOo9vL8ECMWN76EcKjsNGfo8YgNZ7c2u";
+    const bbox = req.query.bbox || "-118.75,33.7,-117.6,34.4";
+
     try {
-        const result = await sql`
-      SELECT
-        stop_id,
-        stop_name,
-        stop_code,
-        location_type,
-        parent_station,
-        tpis_name,
-        ST_AsGeoJSON(geom)::json AS geometry
-      FROM stops;
-    `;
-        const features = result.map(row => ({
-            type: "Feature",
-            geometry: row.geometry,
-            properties: {
-                stop_id: row.stop_id,
-                name: row.stop_name,
-                code: row.stop_code,
-                type: row.location_type,
-                parent: row.parent_station,
-                tpis: row.tpis_name
+        const response = await fetch(
+            `https://transit.land/api/v2/rest/routes?include_stops=true&format=geojson&bbox=${bbox}&route_types=0,1,2&per_page=1000`,
+            {
+                headers: { apikey: apiKey }
             }
-        }));
-        res.json({ type: "FeatureCollection", features });
+        );
+
+        if (!response.ok) {
+            const text = await response.text();
+            return res.status(response.status).json({
+                error: true,
+                message: "Transitland API error",
+                response: text
+            });
+        }
+
+        const geojson = await response.json();
+        res.json(geojson);
     } catch (err) {
-        console.error(err);
-        res.status(500).send("Error retrieving stops");
+        console.error("Transitland stations fetch failed:", err);
+        res.status(500).json({ error: true, message: "Fetch failed", detail: err.message });
     }
 });
-app.get("/api/shapes", async (req, res) => {
+app.get("/api/routes", async (req, res) => {
+    const apiKey = API_KEY || "WOo9vL8ECMWN76EcKjsNGfo8YgNZ7c2u";
+    const bbox = req.query.bbox || "-118.75,33.7,-117.6,34.4";
+
     try {
-        const shapes = await sql`
-      SELECT shape_id, ST_AsGeoJSON(ST_MakeLine(geom ORDER BY pt_sequence))::json AS geometry
-      FROM shapes
-      GROUP BY shape_id
-    `;
-
-        const features = shapes.map(row => ({
-            type: "Feature",
-            geometry: row.geometry,
-            properties: { shape_id: row.shape_id }
-        }));
-
-        res.json({ type: "FeatureCollection", features });
+        const response = await fetch(
+            `https://transit.land/api/v2/rest/routes?include_stops=true&format=geojson&bbox=${bbox}&route_types=0,1,2&limit=1000`,
+            {
+                headers: { apikey: apiKey }
+            }
+        );
+        if (!response.ok) {
+            const text = await response.text();
+            return res.status(response.status).json({
+                error: true,
+                message: "Transitland API error",
+                response: text
+            });
+        }
+        const geojson = await response.json();
+        res.json(geojson);
     } catch (err) {
-        console.error(err);
-        res.status(500).send("Failed to load shapes");
+        console.error("Transitland routes fetch failed:", err);
+        res.status(500).json({ error: true, message: "Fetch failed", detail: err.message });
     }
 });
 // Start server
