@@ -1,4 +1,0 @@
-network_id,network_name
-RURAL,
-FERRY,
-RAPID_EXPRESS_PREMIUM,
