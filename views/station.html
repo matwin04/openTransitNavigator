@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Departures for {{parent.stop_name}}</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    h2 {
+      color: #004466;
+    }
+
+    a {
+      text-decoration: none;
+      color: #0066cc;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: #eef;
+    }
+
+    .back-link {
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+{{> navbar}}
+
+<a class="back-link" href="/">← Back to Map</a>
+<h2>Departures for {{parent.stop_name}}</h2>
+
+{{#if departures.length}}
+<table>
+  <thead>
+  <tr>
+    <th>Route</th>
+    <th>Headsign</th>
+    <th>Departure Time</th>
+  </tr>
+  </thead>
+  <tbody>
+  {{#each departures}}
+  <tr style="background-color: #{{trip.route.route_color}}; color: #{{trip.route.route_text_color}};">
+    <td>{{trip.route.route_long_name}}</td>
+    <td>{{stop_headsign}}</td>
+    <td>{{departure_time}}</td>
+  </tr>
+  {{/each}}
+  </tbody>
+</table>
+{{else}}
+<p>No upcoming departures found.</p>
+{{/if}}
+</body>
+</html>

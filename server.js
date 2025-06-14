@@ -35,6 +35,28 @@ app.use("/public", express.static(PUBLIC_DIR));
 app.get("/", (req, res) => {
     res.render("index", { title: "Open Transit Navigator" });
 });
+app.get("/stations/:id", async (req, res) => {
+    const stopId = req.params.id;
+    const apiUrl = `https://transit.land/api/v2/rest/stops/${stopId}/departures`;
+
+    try {
+        const response = await fetch(apiUrl, {
+            headers: { apikey: process.env.API_KEY || "" }
+        });
+        const data = await response.json();
+        const stop = data.stops?.[0];
+        const parent = stop.parent;
+
+        console.log(parent);
+        res.render("station", {
+            parent: stop.parent,
+            departures: stop.departures || [],
+            trip: stop.departures.trip
+        });
+    } catch (err) {
+        console.error("Failed to fetch station departures:", err);
+    }
+});
 app.get("/api/stations", async (req, res) => {
     const apiKey = API_KEY || "WOo9vL8ECMWN76EcKjsNGfo8YgNZ7c2u";
     const bbox = req.query.bbox || "-118.75,33.7,-117.6,34.4";
@@ -89,6 +111,7 @@ app.get("/api/routes", async (req, res) => {
         res.status(500).json({ error: true, message: "Fetch failed", detail: err.message });
     }
 });
+
 // Start server
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);

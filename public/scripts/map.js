@@ -1,45 +1,33 @@
-const map = L.map("map").setView([34.0522, -118.2437], 11); // Los Angeles
+const map = L.map("map", {
+    center: [34.05, -118.25],
+    zoom: 11,
+    layers: [],
+    zoomControl: false
+});
 
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
+L.control.zoom({ position: "bottomright" }).addTo(map);
+
+const baseLayers = {
+    "Positron Light": L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; OpenStreetMap & CartoDB'
+    }),
+    "Positron Dark": L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; OpenStreetMap & CartoDB'
+    })
+};
+
+baseLayers["Positron Dark"].addTo(map);
+
+L.control.layers(baseLayers, {}, { position: "topright", collapsed: false }).addTo(map);
+
+const stationLayer = L.layerGroup().addTo(map);
+const routeLayer = L.geoJSON(null, {
+    style: feature => ({
+        color: `#${feature.properties.route_color || "0088ff"}`,
+        weight: 4
+    })
 }).addTo(map);
 
-const routeLayer = L.layerGroup().addTo(map);
-const stationLayer = L.layerGroup().addTo(map);
-
-// ✅ Fetch and draw routes (with embedded stops shown as small dots)
-function getRoutes() {
-    fetch("/api/routes")
-        .then(res => res.json())
-        .then(drawRoutes)
-        .catch(console.error);
-}
-
-// ✅ Fetch /api/stations and flatten + render all deduped stops as GeoJSON
-async function getStations() {
-    try {
-        const res = await fetch("/api/stations");
-        const data = await res.json();
-        const uniqueStations = new Map();
-
-        data.features.forEach(route => {
-            const stops = route.properties?.route_stops || [];
-
-            stops.forEach(entry => {
-                const stop = entry.stop;
-                const id = stop.stop_id || stop.onestop_id;
-                if (!uniqueStations.has(id)) {
-                    uniqueStations.set(id, stop);
-                }
-            });
-        });
-
-        drawStationMarkers(uniqueStations);
-    } catch (err) {
-        console.error("Failed to load station data", err);
-    }
-}
-// ✅ Draw deduplicated stations as a clean layer
 function drawStationMarkers(stationMap) {
     const features = [];
 
@@ -51,15 +39,13 @@ function drawStationMarkers(stationMap) {
             geometry: stop.geometry,
             properties: {
                 stop_id: stop.stop_id,
-                stop_name: stop.stop_name
+                stop_name: stop.stop_name,
+                id: stop.id // <-- This is the numeric ID used in /stations/:id
             }
         });
     }
 
-    L.geoJSON({
-        type: "FeatureCollection",
-        features: features
-    }, {
+    L.geoJSON({ type: "FeatureCollection", features }, {
         pointToLayer: (feature, latlng) => {
             return L.circleMarker(latlng, {
                 radius: 5,
@@ -69,36 +55,50 @@ function drawStationMarkers(stationMap) {
             });
         },
         onEachFeature: (feature, layer) => {
-            const name = feature.properties.stop_name || "Unnamed Station";
-            layer.bindPopup(`<b>${name}</b>`);
+            const stop_name = feature.properties.stop_name || "Unnamed Station";
+            const stationId = feature.properties.id;
+
+            layer.bindPopup(`
+                <strong>${stop_name}</strong><br>
+                <b>ID: ${stationId}</b><br>
+                <a href="/stations/${stationId}">View Departures</a>
+            `);
         }
     }).addTo(stationLayer);
 }
-// ✅ Draw color-coded rail routes
-function drawRoutes(geojson) {
-    L.geoJSON(geojson, {
-        style: feature => {
-            const color = feature.properties.route_color;
-            return {
-                color: color ? `#${color}` : "#666666",
-                weight: 3,
-                opacity: 0.9
-            };
-        },
-        onEachFeature: (feature, layer) => {
-            const props = feature.properties;
-            const name = props.route_long_name || props.route_name || "Unnamed Route";
-            layer.bindPopup(`<b>${name}</b><br>Type: ${props.route_type}`);
+async function getStations() {
+    try {
+        const res = await fetch("/api/stations");
+        const data = await res.json();
+        const stationMap = new Map();
+
+        for (const feature of data.features) {
+            if (feature.properties && feature.properties.route_stops) {
+                for (const rs of feature.properties.route_stops) {
+                    const stop = rs.stop;
+                    if (!stationMap.has(stop.id)) {
+                        stationMap.set(stop.id, stop);
+                    }
+                }
+            }
         }
-    }).addTo(routeLayer);
+
+        drawStationMarkers(stationMap);
+    } catch (err) {
+        console.error("Failed to load stations", err);
+    }
 }
 
-// ▶️ Load everything
+async function getRoutes() {
+    try {
+        const res = await fetch("/api/routes");
+        const data = await res.json();
+        routeLayer.clearLayers();
+        routeLayer.addData(data);
+    } catch (err) {
+        console.error("Failed to load routes", err);
+    }
+}
+
 getRoutes();
 getStations();
-
-// 🧭 Layer toggles
-L.control.layers(null, {
-    "Routes": routeLayer,
-    "Stations": stationLayer
-}).addTo(map);
