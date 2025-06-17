@@ -36,6 +36,9 @@ app.get("/map", (req, res) => {
 app.get("/stations",(req, res) => {
     res.render("stations", {title:"Stations"});
 });
+app.get("/test",(req, res) => {
+    res.render("testing");
+})
 app.get("/stations/:id", async (req, res) => {
     const stopId = req.params.id;
     const apiUrl = `https://transit.land/api/v2/rest/stops/${stopId}/departures`;

@@ -20,10 +20,13 @@
   },
   "homepage": "https://github.com/matwin04/openTransitNavigator#readme",
   "dependencies": {
+    "@turf/helpers": "^7.2.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "express-handlebars": "^8.0.3",
+    "gtfs-utils": "^5.1.0",
     "multer": "^2.0.1",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "unzipper": "^0.12.3"
   }
 }

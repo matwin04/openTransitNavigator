@@ -1,10 +1,128 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" />
     <title>{{title}}</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        html,
+        body,
+        #map {
+            height: 100%;
+            margin: 0;
+        }
+        #legend,
+        #stationDetails {
+            position: absolute;
+            background: white;
+            padding: 10px;
+            z-index: 1000;
+            border: 1px solid #ccc;
+            font-family: sans-serif;
+            font-size: 0.9em;
+        }
+        #legend {
+            top: 10px;
+            left: 10px;
+            max-width: 250px;
+        }
+        #stationDetails {
+            bottom: 10px;
+            left: 10px;
+            max-width: 250px;
+            max-height: 40%;
+            overflow-y: auto;
+        }
+        #exportBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 6px;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
+<div id="map"></div>
+<div id="stationDetails"><strong>Station Info</strong><br /><em>Click a station</em></div>
+<button id="exportBtn">Export GeoJSON</button>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/public/scripts/map.js"></script>
+</body>
+</html>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        html,
+        body,
+        #map {
+            height: 100%;
+            margin: 0;
+        }
+        #legend,
+        #stationDetails {
+            position: absolute;
+            background: white;
+            padding: 10px;
+            z-index: 1000;
+            border: 1px solid #ccc;
+            font-family: sans-serif;
+            font-size: 0.9em;
+        }
+        #legend {
+            top: 10px;
+            left: 10px;
+            max-width: 250px;
+        }
+        #stationDetails {
+            bottom: 10px;
+            left: 10px;
+            max-width: 250px;
+            max-height: 40%;
+            overflow-y: auto;
+        }
+        #exportBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 6px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<div id="stationDetails"><strong>Station Info</strong><br /><em>Click a station</em></div>
+<button id="exportBtn">Export GeoJSON</button>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/public/scripts/map.js"></script>
 </body>
 </html>
