@@ -30,6 +30,9 @@ app.use("/public", express.static(PUBLIC_DIR));
 app.get("/", (req, res) => {
     res.render("index", { title: "Open Transit Navigator" });
 });
+app.get("/map", (req, res) => {
+    res.render("map", { title: "Open Transit Navigator" });
+});
 app.get("/stations",(req, res) => {
     res.render("stations", {title:"Stations"});
 });
@@ -46,7 +49,7 @@ app.get("/stations/:id", async (req, res) => {
         const parent = stop?.parent || stop;
         const departures = stop?.departures || [];
 
-        res.render("station", {
+        res.render("stationboard", {
             layout: false,
             title: parent?.name || "Station Info",
             parent,
