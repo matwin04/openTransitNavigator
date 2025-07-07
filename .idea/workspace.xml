@@ -7,10 +7,7 @@
     <list default="true" id="55437ce9-b232-49bf-9c37-106ebc09d8c3" name="Changes" comment="Schedules work">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/scripts/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/scripts/map.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/map.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/map.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/partials/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/partials/navbar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/stationboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/stationboard.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,7 +121,10 @@
       <workItem from="1749407609355" duration="8000" />
       <workItem from="1750105898887" duration="2000" />
       <workItem from="1750135951177" duration="2709000" />
-      <workItem from="1750181954152" duration="5287000" />
+      <workItem from="1750181954152" duration="7231000" />
+      <workItem from="1750213206528" duration="3000" />
+      <workItem from="1750263819478" duration="334000" />
+      <workItem from="1750264739993" duration="2000" />
     </task>
     <task id="LOCAL-00001" summary="Somewhat working now">
       <option name="closed" value="true" />

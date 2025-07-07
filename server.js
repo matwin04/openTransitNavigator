@@ -38,32 +38,7 @@ app.get("/stations",(req, res) => {
 });
 app.get("/test",(req, res) => {
     res.render("testing");
-})
-app.get("/stations/:id", async (req, res) => {
-    const stopId = req.params.id;
-    const apiUrl = `https://transit.land/api/v2/rest/stops/${stopId}/departures`;
-
-    try {
-        const response = await fetch(apiUrl, {
-            headers: { apikey: API_KEY || "" }
-        });
-        const data = await response.json();
-        const stop = data.stops?.[0];
-        const parent = stop?.parent || stop;
-        const departures = stop?.departures || [];
-
-        res.render("stationboard", {
-            layout: false,
-            title: parent?.name || "Station Info",
-            parent,
-            departures
-        });
-    } catch (err) {
-        console.error("Failed to fetch station departures:", err);
-        res.status(500).send("Could not load station info");
-    }
 });
-
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

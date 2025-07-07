@@ -1,20 +1,28 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <meta charset="utf-8" />
-        <title>{{title}}</title>
-        <link rel="icon" href="/public/images/logo.svg" type="image/x-icon" />
-
-
+        <meta charset="UTF-8" />
+        <title>Inline LA Metro SVG</title>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+            }
+            svg {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
     </head>
     <body>
-        <main>
-            <h2>OpenTransit Map</h2>
-            <p>Simplifying and Making Transit Easier to use</p>
-        </main>
-
-        <a href="/map">Map</a>
-        <a href="/stations">Stations</a>
-        <a href="/about">About</a>
+        <header>
+            <h2>Open Transit Navigator</h2>
+            Select City<input/>
+        </header>
+        <svg id="map-svg"></svg>
+        <script src="/public/scripts/map.js"></script>
     </body>
 </html>
