@@ -20,8 +20,23 @@
     <body>
         <header>
             <h2>Open Transit Navigator</h2>
-            Select City<input/>
+
+            <h3>Maps Currently Available</h3>
+            <ul>
+                <li>LA Metro</li>
+                <li>SF Muni</li>
+                <li>BART/CalTrain</li>
+            </ul>
         </header>
+        <div id="controls">
+            <label for="map-select">Select Map:</label>
+            <select id="map-select">
+                <option value="LAMETRO.svg">LA Metro</option>
+                <option value="SFMTA.svg">SF Muni</option>
+                <option value="BART.svg">BART</option>
+                <!-- Add more maps here -->
+            </select>
+        </div>
         <svg id="map-svg"></svg>
         <script src="/public/scripts/map.js"></script>
     </body>

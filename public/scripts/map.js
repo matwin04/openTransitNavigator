@@ -5,10 +5,20 @@ const svg = d3.select("#map-svg");
       g.attr("transform", event.transform);
     }));
 
-    // Load and inline the external SVG file
-    d3.xml("/public/maps/LAMETRO.svg").then(data => {
-      const importedNode = document.importNode(data.documentElement, true);
-      g.node().appendChild(importedNode);
-    }).catch(error => {
-      console.error("Error loading SVG:", error);
+    const loadMap = (filename) => {
+      g.selectAll("*").remove(); // Clear previous map
+      d3.xml(`/public/maps/${filename}`).then(data => {
+        const importedNode = document.importNode(data.documentElement, true);
+        g.node().appendChild(importedNode);
+      }).catch(error => {
+        console.error("Error loading SVG:", error);
+      });
+    };
+
+    // Load initial map
+    loadMap(document.getElementById("map-select").value);
+
+    // Change map when selection changes
+    document.getElementById("map-select").addEventListener("change", function () {
+      loadMap(this.value);
     });
