@@ -6,6 +6,10 @@ import dotenv from "dotenv";
 import { engine } from "express-handlebars";
 import { fileURLToPath } from "url";
 import fetch from "node-fetch";
+import {getStops} from "gtfs";
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
+
 
 dotenv.config();
 
@@ -30,11 +34,31 @@ app.use("/public", express.static(PUBLIC_DIR));
 app.get("/", (req, res) => {
     res.render("index", { title: "Open Transit Navigator" });
 });
+
 app.get("/map", (req, res) => {
     res.render("map", { title: "Open Transit Navigator" });
 });
-app.get("/stations",(req, res) => {
-    res.render("stations", {title:"Stations"});
+app.get("/stations", async (req, res) => {
+    try {
+        const db = await open({
+            filename: path.join(__dirname, "public", "gtfs.db"),
+            driver: sqlite3.Database,
+        });
+
+        const stops = await db.all(
+            "SELECT stop_id, stop_name, stop_lat, stop_lon FROM stops ORDER BY stop_name ASC"
+        );
+
+        console.log(`📍 Loaded ${stops.length} stops from database`);
+
+        res.render("stations", {
+            title: "Stations",
+            stops: stops.length > 0 ? stops : null
+        });
+    } catch (error) {
+        console.error("❌ Error loading stations:", error.message);
+        res.status(500).send("Failed to load stations.");
+    }
 });
 app.get("/test",(req, res) => {
     res.render("testing");

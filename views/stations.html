@@ -7,22 +7,21 @@
 <body>
 <i>PAGE CURRENTLY IN TESTING</i>
 {{>navbar}}
-<table>
-  <thead>
-    <tr>
-      <th>Station</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <a href="/stations/1436974125">Santa Ana</a>
-      </td>
-      <td>
-        <a href="/stations/s-9qh0n07bue-santaana">Santa Ana</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+
+
+<h1>{{title}}</h1>
+
+{{#if stops}}
+<ul>
+    {{#each stops}}
+    <li>
+        <strong>{{stop_name}}</strong> — {{stop_id}}
+        <br />📍 {{stop_lat}}, {{stop_lon}}
+    </li>
+    {{/each}}
+</ul>
+{{else}}
+<p>No stations found in the database.</p>
+{{/if}}
 </body>
 </html>

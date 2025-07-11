@@ -24,9 +24,12 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "express-handlebars": "^8.0.3",
+    "gtfs": "^4.17.4",
     "gtfs-utils": "^5.1.0",
     "multer": "^2.0.1",
     "node-fetch": "^3.3.2",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
     "unzipper": "^0.12.3"
   }
 }

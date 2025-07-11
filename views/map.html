@@ -1,86 +1,89 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>{{title}}</title>
-    <link rel="icon" href="/public/images/logo.svg" type="image/x-icon" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>
-        html, body, #map {
-            height: 100%;
-            margin: 0;
-        }
+    <head>
+        <meta charset="utf-8" />
+        <title>{{title}}</title>
+        <link rel="icon" href="/public/images/logo.svg" type="image/x-icon" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.js"></script>
+        <link href="https://unpkg.com/maplibre-gl@^5.6.1/dist/maplibre-gl.css" rel="stylesheet" />
+        <style>
+            html,
+            body,
+            #map {
+                height: 100%;
+                margin: 0;
+            }
 
-        #sidebar {
-            position: absolute;
-            top: 60px;
-            right: 10px;
-            width: 250px;
-            background: #fff;
-            padding: 1rem;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            font-family: sans-serif;
-            font-size: 0.9em;
-            display: none;
-        }
+            #sidebar {
+                position: absolute;
+                top: 60px;
+                right: 10px;
+                width: 250px;
+                background: #fff;
+                padding: 1rem;
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                font-family: sans-serif;
+                font-size: 0.9em;
+                display: none;
+            }
 
-        #exportBtn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-        }
+            #exportBtn {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                z-index: 1000;
+            }
 
-        #legend {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            max-width: 250px;
-            background: white;
-            padding: 10px;
-            z-index: 1000;
-            border: 1px solid #ccc;
-            font-family: sans-serif;
-            font-size: 0.9em;
-        }
+            #legend {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                max-width: 250px;
+                background: white;
+                padding: 10px;
+                z-index: 1000;
+                border: 1px solid #ccc;
+                font-family: sans-serif;
+                font-size: 0.9em;
+            }
 
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 4px;
-        }
+            .legend-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 4px;
+            }
 
-        .legend-color {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            margin-right: 6px;
-            border: 1px solid #ccc;
-        }
-    </style>
-</head>
-<body>
-
-<div id="map"></div>
-
-<div id="sidebar">
-    <h2 id="station-name">Station Name</h2>
-    <p><strong>Operator:</strong> <span id="station-operator">–</span></p>
-    <p><strong>Network:</strong> <span id="station-network">–</span></p>
-    <p><strong>Node ID:</strong> <span id="station-id">–</span></p>
-</div>
-
-<div id="legend">
-    <strong>Legend</strong>
-    <div class="legend-item"><div class="legend-color" style="background:#0066cc;"></div>Subway/Light Rail</div>
-    <div class="legend-item"><div class="legend-color" style="background:black;"></div>Station</div>
-</div>
-
-<button id="exportBtn">Export GeoJSON</button>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="/public/scripts/map.js"></script>
-
-</body>
+            .legend-color {
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                margin-right: 6px;
+                border: 1px solid #ccc;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script>
+            var map = new maplibregl.Map({
+                container: "map", // container id
+                style: "https://tiles.stadiamaps.com/styles/osm_bright.json", // style URL
+                center: [0, 0], // starting position [lng, lat]
+                zoom: 1 // starting zoom
+            });
+        </script>
+        <div id="legend">
+            <strong>Legend</strong>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #0066cc"></div>
+                Subway/Light Rail
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: black"></div>
+                Station
+            </div>
+        </div>
+    </body>
 </html>
