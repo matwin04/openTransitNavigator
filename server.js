@@ -9,7 +9,8 @@ import fetch from "node-fetch";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import db from "gtfs-utils/route-types.js";
-
+import { parse } from "path";
+import { format } from "date-fns";
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -71,28 +72,49 @@ app.get("/stations", async (req, res) => {
 });
 app.get("/stations/departures/:id", async (req, res) => {
     try {
-        const db = await getDB();
         const stopId = req.params.id;
+        const db = await getDB();
 
-        const station = await db.get("SELECT * FROM stops WHERE stop_id = ?", stopId);
-        if (!station) {
-            return res.status(404).send("Station not found");
+        // Get stop info
+        const stop = await db.get("SELECT * FROM stops WHERE stop_id = ?", stopId);
+        if (!stop) {
+            return res.status(404).send("Stop not found");
         }
 
-        const departures = await db.all(
-            `SELECT st.trip_id, st.departure_time, t.trip_headsign, r.route_short_name, r.route_color, r.route_text_color
-             FROM stop_times st
-             JOIN trips t ON st.trip_id = t.trip_id
-             JOIN routes r ON t.route_id = r.route_id
-             WHERE st.stop_id = ?
-             ORDER BY st.departure_time`, stopId
-        );
+        // Get departures
+        const rows = await db.all(`
+            SELECT st.trip_id, st.departure_time, t.trip_headsign, r.route_short_name, r.route_color
+            FROM stop_times st
+            JOIN trips t ON st.trip_id = t.trip_id
+            JOIN routes r ON t.route_id = r.route_id
+            WHERE st.stop_id = ?
+            ORDER BY st.departure_time ASC
+        `, stopId);
+
+        // Get current time in seconds
+        const now = new Date();
+        const nowSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+
+        // Format departures: filter past, format to 12-hour time
+        const departures = rows
+            .map(d => {
+                const [h, m, s] = d.departure_time.split(":").map(Number);
+                const depSeconds = h * 3600 + m * 60 + s;
+
+                return {
+                    ...d,
+                    departure_seconds: depSeconds,
+                    formatted_time: format(new Date(2000, 0, 1, h % 24, m), "h:mm a"),
+                };
+            })
+            .filter(d => d.departure_seconds >= nowSeconds);
 
         res.render("departures", {
-            title: `Departures - ${station.stop_name}`,
-            stop: station,
+            title: `Departures for ${stop.stop_name}`,
+            stop,
             departures
         });
+
     } catch (err) {
         console.error("Error loading departures:", err);
         res.status(500).send("Failed to load departures.");

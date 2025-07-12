@@ -5,26 +5,26 @@
   <meta charset="UTF-8">
   <title>{{ title }}</title>
   <link rel="stylesheet" href="/public/styles/departures.css">
+
 </head>
 <body>
 {{> navbar }}
 
 <main class="container">
   <h2>Departures for Stop {{ stop.stop_name }}</h2>
-  <table>
+  <table class="departure-table">
     <thead>
     <tr>
-      <th>Trip ID</th>
-      <th>Time</th>
-      <th>Headsign</th>
+
+      <th>Dest</th>
       <th>Route</th>
+      <th>Time</th>
     </tr>
     </thead>
     <tbody>
     {{#each departures}}
-    <tr style="background-color: #{{ route_color }}; color: #{{ route_text_color }}">
-      <td>{{ trip_id }}</td>
-      <td>{{ stop_headsign }}</td>
+    <tr style="background-color: #{{route_color}}10; border-left: 5px solid #{{route_color}}">
+
       <td>{{ trip_headsign }}</td>
       <td>{{ route_short_name }}</td>
       <td>{{departure_time}}</td>
@@ -32,7 +32,7 @@
     {{/each}}
     </tbody>
   </table>
-  
+
 </main>
 </body>
 </html>
