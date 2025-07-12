@@ -1,6 +1,25 @@
-<link rel="icon" href="/public/images/logo.svg" type="image/x-icon" />
+<head>
+    <link href="/public/styles/navbar.css" rel="stylesheet" type="text/css">
+    <title></title>
+</head>
+<nav>
+    <div>
+        <a href="/" class="navlink">Home</a>
+        <a href="/stations" class="navlink">Stations</a>
+        <a href="/routes" class="navlink">Routes</a>
+        <a href="/agencies" class="navlink"> Agencies</a>
+    </div>
+    <div>
+        <span id="clock"></span>
+    </div>
+</nav>
 
-<a href="/">Home</a>
-<a href="/map">Map</a>
-<a href="/stations">Stations</a>
-<a href="/about">About</a>
+<script>
+function updateClock() {
+    const now = new Date();
+    const options = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    document.getElementById('clock').textContent = now.toLocaleTimeString([], options);
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>

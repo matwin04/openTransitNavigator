@@ -1,0 +1,12 @@
+{
+  "agencies": [
+    {
+      "agency_key": "metrolink",
+      "path": "./public/gtfs/Metrolink.zip"
+    },
+    {
+      "agency_key": "nctd",
+      "path": "./public/gtfs/NCTD.zip"
+    }
+  ]
+}

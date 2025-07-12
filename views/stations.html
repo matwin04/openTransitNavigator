@@ -6,22 +6,25 @@
 </head>
 <body>
 <i>PAGE CURRENTLY IN TESTING</i>
-{{>navbar}}
+{{> navbar}}
+<table>
 
-
-<h1>{{title}}</h1>
-
-{{#if stops}}
-<ul>
-    {{#each stops}}
-    <li>
-        <strong>{{stop_name}}</strong> — {{stop_id}}
-        <br />📍 {{stop_lat}}, {{stop_lon}}
-    </li>
+    <thead>
+        <tr>
+            <th>Station</th>
+        </tr>
+    </thead>
+    <tbody>
+    {{#each stations}}
+    <tr>
+        <td>{{stop_name}}</td>
+        <td>
+            <a href="/stations/departures/{{stop_id}}">View</a>
+        </td>
+    </tr>
     {{/each}}
-</ul>
-{{else}}
-<p>No stations found in the database.</p>
-{{/if}}
+    </tbody>
+</table>
+
 </body>
 </html>

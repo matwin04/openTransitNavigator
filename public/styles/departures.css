@@ -1,0 +1,39 @@
+/* Departure Table Styles */
+.departure-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin-top: 1rem;
+    background-color: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.departure-table th, .departure-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.departure-table th {
+    background-color: #f5f5f5;
+    color: #333;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+}
+
+.departure-table tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.departure-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.departure-table td {
+    color: #444;
+    font-size: 0.95rem;
+}

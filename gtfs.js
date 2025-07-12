@@ -1,30 +1,28 @@
-// gtfs.js
-import { importGtfs, openDb } from 'gtfs';
+import { importGtfs } from 'gtfs';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
-// Set __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Open SQLite database
-const db = openDb({
+// Read config.json
+const configPath = path.join(__dirname, 'config.json');
+const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+
+// Resolve all agency paths
+for (const agency of config.agencies) {
+    agency.path = path.resolve(__dirname, agency.path);
+    if (!fs.existsSync(agency.path)) {
+        console.error(`❌ GTFS file not found: ${agency.path}`);
+        process.exit(1);
+    }
+}
+
+// Import feeds using gtfs package
+await importGtfs({
+    agencies: config.agencies,
     sqlitePath: path.join(__dirname, 'public', 'gtfs.db'),
 });
 
-// Run GTFS import with inline config
-try {
-    await importGtfs({
-        agencies: [
-            {
-                agency_key: 'bart',
-                url: 'http://www.bart.gov/dev/schedules/google_transit.zip',
-            }
-        ],
-        db: db
-    });
-
-    console.log("✅ GTFS import complete (BART)");
-} catch (err) {
-    console.error("❌ GTFS import failed:", err.message);
-}
+console.log("✅ GTFS import complete");

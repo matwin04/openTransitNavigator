@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+</head>
+<body>
+{{> navbar}}
+<h1>Transit Agencies</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Website</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each agencies}}
+    <tr>
+        <td>{{this.agency_id}}</td>
+        <td>{{this.agency_name}}</td>
+        <td><a href="{{this.agency_url}}" target="_blank">{{this.agency_url}}</a></td>
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
+</body>
+</html>
