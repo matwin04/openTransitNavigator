@@ -1,15 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link href="/images/favicon.ico" type="image/x-icon" rel="shortcut icon">
-  <title>Transit Stations Map (Overpass)</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 500px;
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
-    {{>navbar}}
-<h2>PyTransit</h2>
-<a href="/stations">Stations</a>
+{{> navbar }}
+<h1>OpenTransitNavigator</h1>
+<div id="map"></div>
+<script>
+    const map = L.map('map').setView([33.7, -117.9], 9); // Southern California center
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    fetch("/geojson/stops")
+        .then(res => res.json())
+        .then(data => {
+            L.geoJSON(data, {
+                onEachFeature: function (feature, layer) {
+                    layer.bindPopup(`<strong>${feature.properties.stop_name}</strong><br>ID: ${feature.properties.stop_id}`);
+                }
+            }).addTo(map);
+        });
+</script>
 </body>
-</html>

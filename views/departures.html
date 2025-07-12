@@ -27,11 +27,27 @@
 
       <td>{{ trip_headsign }}</td>
       <td>{{ route_short_name }}</td>
-      <td>{{departure_time}}</td>
+      <td class="departure-time" data-time="{{departure_time}}"></td>
     </tr>
     {{/each}}
     </tbody>
   </table>
+  <script>
+    function formatToAMPM(timeStr) {
+      const [hour, minute] = timeStr.split(":").map(Number);
+      const date = new Date(2000, 0, 1, hour, minute);
+      return date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+      });
+    }
+
+    document.querySelectorAll(".departure-time").forEach(el => {
+      const raw = el.dataset.time;
+      el.textContent = formatToAMPM(raw);
+    });
+  </script>
 
 </main>
 </body>

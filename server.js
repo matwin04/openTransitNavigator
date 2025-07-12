@@ -35,9 +35,31 @@ app.set("views", VIEWS_DIR);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static(PUBLIC_DIR));
-
-app.get("/", (req, res) => {
-    res.render("index", { title: "Open Transit Navigator" });
+function getPacificTimeString() {
+    const now = new Date();
+    const pacificTime = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Los_Angeles',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    }).format(now);
+    return pacificTime; // "14:23:00"
+}
+function formatTo12Hour(timeStr) {
+    const [hour, minute] = timeStr.split(":").map(Number);
+    const date = new Date(2000, 0, 1, hour, minute);
+    return date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "America/Los_Angeles"
+    });
+}
+app.get("/", async (req, res) => {
+    const db = await getDB();
+    const stops = await db.all("SELECT stop_id, stop_name, stop_lat, stop_lon FROM stops");
+    res.render("index", { title: "Open Transit Navigator", stops });
 });
 
 app.get("/map", (req, res) => {
@@ -70,55 +92,55 @@ app.get("/stations", async (req, res) => {
         res.status(500).send("Failed to load stations.");
     }
 });
+
+
 app.get("/stations/departures/:id", async (req, res) => {
     try {
-        const stopId = req.params.id;
         const db = await getDB();
+        const stopId = req.params.id;
 
-        // Get stop info
-        const stop = await db.get("SELECT * FROM stops WHERE stop_id = ?", stopId);
-        if (!stop) {
-            return res.status(404).send("Stop not found");
-        }
+        const now = getPacificTimeString(); // "HH:MM:SS"
 
-        // Get departures
-        const rows = await db.all(`
-            SELECT st.trip_id, st.departure_time, t.trip_headsign, r.route_short_name, r.route_color
-            FROM stop_times st
-            JOIN trips t ON st.trip_id = t.trip_id
-            JOIN routes r ON t.route_id = r.route_id
-            WHERE st.stop_id = ?
-            ORDER BY st.departure_time ASC
-        `, stopId);
-
-        // Get current time in seconds
-        const now = new Date();
-        const nowSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-
-        // Format departures: filter past, format to 12-hour time
-        const departures = rows
-            .map(d => {
-                const [h, m, s] = d.departure_time.split(":").map(Number);
-                const depSeconds = h * 3600 + m * 60 + s;
-
-                return {
-                    ...d,
-                    departure_seconds: depSeconds,
-                    formatted_time: format(new Date(2000, 0, 1, h % 24, m), "h:mm a"),
-                };
-            })
-            .filter(d => d.departure_seconds >= nowSeconds);
+        const departures = await db.all(
+            `SELECT st.departure_time, t.trip_headsign, r.route_short_name, r.route_color, r.route_text_color
+       FROM stop_times st
+       JOIN trips t ON st.trip_id = t.trip_id
+       JOIN routes r ON t.route_id = r.route_id
+       WHERE st.stop_id = ?
+       AND TIME(st.departure_time) > TIME(?)
+       ORDER BY st.departure_time ASC
+       LIMIT 10`,
+            [stopId, now]
+        );
 
         res.render("departures", {
-            title: `Departures for ${stop.stop_name}`,
-            stop,
-            departures
+            title: "Departures",
+            departures,
+            stop_id: stopId
         });
-
     } catch (err) {
         console.error("Error loading departures:", err);
         res.status(500).send("Failed to load departures.");
     }
+});
+app.get("/geojson/stops", async (req, res) => {
+    const db = await getDB();
+    const stops = await db.all("SELECT stop_id, stop_name, stop_lat, stop_lon FROM stops WHERE stop_lat IS NOT NULL AND stop_lon IS NOT NULL");
+    const geojson = {
+        type: "FeatureCollection",
+        features: stops.map(stop => ({
+            type: "Feature",
+            geometry: {
+                type: "Point",
+                coordinates: [parseFloat(stop.stop_lon), parseFloat(stop.stop_lat)]
+            },
+            properties: {
+                stop_id: stop.stop_id,
+                stop_name: stop.stop_name
+            }
+        }))
+    };
+    res.json(geojson);
 });
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
