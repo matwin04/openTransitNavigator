@@ -1,8 +1,17 @@
 {
   "agencies": [
     {
-      "agency_key": "metrolink",
-      "path": "./public/gtfs/Metrolink.zip"
+      "agency_key": "Amtrak",
+      "url": "https://content.amtrak.com/content/gtfs/GTFS.zip"
+    },
+    {
+      "agency_key": "LA_Metro",
+      "url": "https://gitlab.com/LACMTA/gtfs_rail/-/raw/master/gtfs_rail.zip"
+    },
+    {
+      "agency_key": "Metrolink",
+      "url": "https://metrolinktrains.com/globalassets/about/gtfs/gtfs.zip"
     }
-  ]
+  ],
+  "ignoreDuplicates": true
 }
