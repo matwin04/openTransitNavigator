@@ -100,7 +100,11 @@ app.get("/agencies", async (req, res) => {
 app.get("/stations", async (req, res) => {
     try {
         const db = await getDB();
-        const stations = await db.all("SELECT * FROM stops");
+        const stations = await db.all(`
+      SELECT *
+      FROM stops
+      WHERE location_type = 1
+    `);
         res.render("stations", {
             title: "Stations - Open Transit Navigator",
             stations
@@ -168,31 +172,31 @@ app.get("/stations/departures/:id", async (req, res) => {
         res.status(500).send("Failed to load departures.");
     }
 });
-app.get("/geojson/stations.geojson", async (req, res) => {
-    try {
-        const db = await getDB();
-        const rows = await db.all("SELECT stop_id, stop_name, stop_lat, stop_lon FROM stops WHERE stop_lat IS NOT NULL AND stop_lon IS NOT NULL");
+aapp.get("/geojson/stations.geojson", async (req, res) => {
+    const db = await getDB();
+    const stations = await db.all(`
+    SELECT stop_id, stop_name, stop_lat, stop_lon
+    FROM stops
+    WHERE stop_lat IS NOT NULL
+      AND stop_lon IS NOT NULL
+      AND location_type = 1
+  `);
 
-        const geojson = {
-            type: "FeatureCollection",
-            features: rows.map(stop => ({
-                type: "Feature",
-                geometry: {
-                    type: "Point",
-                    coordinates: [stop.stop_lon, stop.stop_lat]
-                },
-                properties: {
-                    stop_id: stop.stop_id,
-                    stop_name: stop.stop_name
-                }
-            }))
-        };
-
-        res.json(geojson);
-    } catch (err) {
-        console.error("Error generating GeoJSON:", err);
-        res.status(500).send("Failed to generate GeoJSON");
-    }
+    const geojson = {
+        type: "FeatureCollection",
+        features: stations.map(stop => ({
+            type: "Feature",
+            geometry: {
+                type: "Point",
+                coordinates: [parseFloat(stop.stop_lon), parseFloat(stop.stop_lat)]
+            },
+            properties: {
+                stop_id: stop.stop_id,
+                stop_name: stop.stop_name
+            }
+        }))
+    };
+    res.json(geojson);
 });
 app.get("/geojson/shapes.geojson", async (req, res) => {
     try {
