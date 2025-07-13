@@ -20,4 +20,4 @@ export async function updateAndImportGtfs() {
     });
 
     console.log("✅ GTFS import complete");
-}s
+}
