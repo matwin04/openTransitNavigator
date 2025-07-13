@@ -99,10 +99,11 @@ app.get("/stations", async (req, res) => {
     try {
         const db = await getDB();
         const stations = await db.all(`
-      SELECT *
-      FROM stops
-      WHERE location_type = 1
-    `);
+            SELECT stop_id, stop_name, stop_lat, stop_lon
+            FROM stops
+            WHERE stop_lat IS NOT NULL AND stop_lon IS NOT NULL
+              AND parent_station IS NULL-- filter entrances
+        `);
         res.render("stations", {
             title: "Stations - Open Transit Navigator",
             stations
@@ -173,11 +174,10 @@ app.get("/stations/departures/:id", async (req, res) => {
 app.get("/geojson/stations.geojson", async (req, res) => {
     const db = await getDB();
     const stations = await db.all(`
-    SELECT stop_id, stop_name, stop_lat, stop_lon
-    FROM stops
-    WHERE stop_lat IS NOT NULL
-      AND stop_lon IS NOT NULL
-      AND location_type = 1
+        SELECT stop_id, stop_name, stop_lat, stop_lon
+        FROM stops
+        WHERE stop_lat IS NOT NULL AND stop_lon IS NOT NULL
+          AND stops.parent_station IS NULL -- filter entrances
     `);
     const geojson = {
         type: "FeatureCollection",
