@@ -13,6 +13,5 @@
       "url": "https://metrolinktrains.com/globalassets/about/gtfs/gtfs.zip"
     }
   ],
-  "ignoreDuplicates": true,
-  "exclude"
+  "ignoreDuplicates": true
 }
