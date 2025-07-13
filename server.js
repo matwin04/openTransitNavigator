@@ -10,7 +10,6 @@ import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { parse } from "path";
 import { format } from "date-fns";
-import { updateAndImportGtfs } from './gtfs.js';
 
 dotenv.config();
 
