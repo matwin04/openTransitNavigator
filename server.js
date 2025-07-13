@@ -18,6 +18,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
+await updateAndImportGtfs();
 const VIEWS_DIR = path.join(__dirname, "views");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const DB_PATH = path.join(PUBLIC_DIR, "gtfs.db");
@@ -171,7 +172,7 @@ app.get("/stations/departures/:id", async (req, res) => {
         res.status(500).send("Failed to load departures.");
     }
 });
-aapp.get("/geojson/stations.geojson", async (req, res) => {
+app.get("/geojson/stations.geojson", async (req, res) => {
     const db = await getDB();
     const stations = await db.all(`
     SELECT stop_id, stop_name, stop_lat, stop_lon
