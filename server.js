@@ -8,15 +8,17 @@ import { fileURLToPath } from "url";
 import fetch from "node-fetch";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
-import db from "gtfs-utils/route-types.js";
 import { parse } from "path";
 import { format } from "date-fns";
+import { updateAndImportGtfs } from './gtfs.js';
+
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
+await updateAndImportGtfs();
 const VIEWS_DIR = path.join(__dirname, "views");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const DB_PATH = path.join(PUBLIC_DIR, "gtfs.db");
@@ -68,7 +70,7 @@ app.get("/routes", async (req, res) => {
     const db = await getDB();
     const routes = await db.all("SELECT * FROM routes");
     res.render("routes", { routes });
-})
+});
 
 app.get("/map", (req, res) => {
     res.render("map", { title: "Open Transit Navigator" });
@@ -113,25 +115,46 @@ app.get("/stations/departures/:id", async (req, res) => {
         const db = await getDB();
         const stopId = req.params.id;
         const now = getPacificTimeString();
+        const radiusMeters = 200;
+        const earthRadiusKm = 6371;
 
-        const stop = await db.get("SELECT * FROM stops WHERE stop_id = ?", stopId);
+        // Get center stop (only once)
+        const stop = await db.get(
+            "SELECT stop_id, stop_name, stop_lat, stop_lon FROM stops WHERE stop_id = ?",
+            stopId
+        );
+        if (!stop) {
+            return res.status(404).send("Stop not found");
+        }
 
+        // Single query: nearby departures using inline distance
         const departures = await db.all(
-            `SELECT 
-                st.departure_time,
-                t.trip_short_name,
-                t.trip_headsign,
-                r.route_short_name,
-                r.route_color,
-                r.route_text_color
-             FROM stop_times st
-             JOIN trips t ON st.trip_id = t.trip_id
-             JOIN routes r ON t.route_id = r.route_id
-             WHERE st.stop_id = ?
-             AND TIME(st.departure_time) > TIME(?)
-             ORDER BY st.departure_time ASC
-             LIMIT 15`,
-            [stopId, now]
+            `
+      SELECT 
+        st.departure_time,
+        t.trip_headsign,
+        r.route_short_name,
+        r.route_long_name,
+        r.route_color,
+        r.route_text_color
+      FROM stops s
+      JOIN stop_times st ON s.stop_id = st.stop_id
+      JOIN trips t ON st.trip_id = t.trip_id
+      JOIN routes r ON t.route_id = r.route_id
+      WHERE s.stop_lat IS NOT NULL AND s.stop_lon IS NOT NULL
+        AND (
+          ${earthRadiusKm} * 2 * 
+          ASIN(SQRT(
+            POWER(SIN(RADIANS((s.stop_lat - ?) / 2)), 2) +
+            COS(RADIANS(?)) * COS(RADIANS(s.stop_lat)) *
+            POWER(SIN(RADIANS((s.stop_lon - ?) / 2)), 2)
+          )) * 1000
+        ) <= ?
+        AND TIME(st.departure_time) > TIME(?)
+      ORDER BY st.departure_time ASC
+      LIMIT 15
+      `,
+            [stop.stop_lat, stop.stop_lat, stop.stop_lon, radiusMeters, now]
         );
 
         res.render("departures", {
