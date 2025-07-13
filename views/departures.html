@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>{{ title }}</title>
-  <link rel="stylesheet" href="/public/styles/departures.css">
+  <link rel="icon" href="/public/images/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
 
 </head>
 <body>
@@ -12,7 +13,7 @@
 
 <main class="container">
   <h2>Departures for Stop {{ stop_name }}</h2>
-  <table class="departure-table">
+  <table class="table is-fullwidth">
     <thead>
     <tr>
       <th>Dest</th>
@@ -24,8 +25,8 @@
     {{#each departures}}
     <tr>
       <td>{{trip_headsign}}</td>
-      <td style="background-color:#{{route_color}};color:#{{route_text_color}};">
-      {{route_short_name}}
+      <td class="has-text-weight-bold has-text-centered" style="background-color: #{{route_color}}; color: #{{route_text_color}};">
+        {{route_short_name}}
       </td>
       <td class="departure-time" data-time="{{departure_time}}">{{departure_time}}</td>
     </tr>

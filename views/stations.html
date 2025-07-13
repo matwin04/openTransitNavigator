@@ -2,22 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Stations</title>
+    <link rel="icon" href="/public/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 <i>PAGE CURRENTLY IN TESTING</i>
 {{> navbar}}
-<table>
+<table class="table is-fullwidth">
 
     <thead>
         <tr>
             <th>Station</th>
+            <th>View Departures</th>
         </tr>
     </thead>
     <tbody>
     {{#each stations}}
     <tr>
-        <td>{{stop_name}}</td>
+
+        <td>
+            <span class="icon">
+                <i class="fa fa-train"></i>
+            </span>
+            {{stop_name}}</td>
         <td>
             <a href="/stations/departures/{{stop_id}}">View</a>
         </td>

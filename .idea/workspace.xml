@@ -5,11 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="55437ce9-b232-49bf-9c37-106ebc09d8c3" name="Changes" comment="OTN Favicon Live">
-      <change afterPath="$PROJECT_DIR$/views/routes.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/views/data.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/openTransitNavigator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/openTransitNavigator.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/map.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/about.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/partials/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/partials/navbar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/about.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/departures.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/departures.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/routes.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/routes.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/stations.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/stations.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

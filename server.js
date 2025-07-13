@@ -61,6 +61,9 @@ app.get("/", async (req, res) => {
     const stops = await db.all("SELECT stop_id, stop_name, stop_lat, stop_lon FROM stops");
     res.render("index", { title: "Open Transit Navigator", stops });
 });
+app.get("/data", async (req, res) => {
+    res.render("data");
+})
 app.get("/routes", async (req, res) => {
     const db = await getDB();
     const routes = await db.all("SELECT * FROM routes");

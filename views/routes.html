@@ -3,8 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Routes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
 </head>
 <body>
   {{> navbar}}
+
+  <h2>Metrolink</h2>
+  <p>Serves cities around the Los Angeles Metro area</p>
+  <span class="tag is-info is-small">Commuter Rail</span>
+  <table class="table is-fullwidth">
+      <thead>
+        <tr>
+            <th>Agency</th>
+            <th>Route Name</th>
+        </tr>
+      </thead>
+      <tbody>
+      {{#routes}}
+      <tr>
+          <td>{{agency_id}}</td>
+          <td>{{route_short_name}}</td>
+          <td>{{route_url}}</td>
+      </tr>
+      {{/routes}}
+      </tbody>
+
+  </table>
 </body>
 </html>
