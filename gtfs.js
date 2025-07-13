@@ -15,8 +15,8 @@ const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
 export async function updateAndImportGtfs() {
     await importGtfs({
-        agencies: config.agencies,
-        sqlitePath: path.join(__dirname, 'public', 'gtfs.db'),
+        ...config, // spreads `ignoreDuplicates` and other options
+        sqlitePath: path.join(__dirname, 'public', 'gtfs.db')
     });
 
     console.log("✅ GTFS import complete");
