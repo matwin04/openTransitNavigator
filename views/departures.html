@@ -11,7 +11,7 @@
 {{> navbar }}
 
 <main class="container">
-  <h2>Departures for Stop {{ stop.stop_name }}</h2>
+  <h2>Departures for Stop {{ stop.station_name }}</h2>
   <table class="departure-table">
     <thead>
     <tr>
@@ -23,11 +23,12 @@
     </thead>
     <tbody>
     {{#each departures}}
-    <tr style="background-color: #{{route_color}}10; border-left: 5px solid #{{route_color}}">
-
-      <td>{{ trip_headsign }}</td>
-      <td>{{ route_short_name }}</td>
-      <td class="departure-time" data-time="{{departure_time}}"></td>
+    <tr>
+      <td>{{destination}}</td>
+      <td style="background-color:#{{route_color}};color:#{{route_text_color}};">
+      {{route_short_name}}
+      </td>
+      <td class="departure-time" data-time="{{departure_time}}">{{departure_time}}</td>
     </tr>
     {{/each}}
     </tbody>

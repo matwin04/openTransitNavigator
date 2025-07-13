@@ -5,6 +5,11 @@
     <title>{{ title }}</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- MapLibre GL JS CSS -->
+    <link href="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.css" rel="stylesheet" />
+
+    <!-- MapLibre GL JS -->
+    <script src="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.js"></script>
     <style>
         #map {
             height: 500px;
@@ -17,21 +22,56 @@
 <h1>OpenTransitNavigator</h1>
 <div id="map"></div>
 <script>
-    const map = L.map('map').setView([33.7, -117.9], 9); // Southern California center
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json', // Better style
+        center: [-117.9223, 33.8687], // Default: Fullerton
+        zoom: 10
+    });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
-    fetch("/geojson/stops")
-        .then(res => res.json())
-        .then(data => {
-            L.geoJSON(data, {
-                onEachFeature: function (feature, layer) {
-                    layer.bindPopup(`<strong>${feature.properties.stop_name}</strong><br>ID: ${feature.properties.stop_id}`);
-                }
-            }).addTo(map);
+    map.on('load', () => {
+        map.addSource('stations', {
+            type: 'geojson',
+            data: '/geojson/stations.geojson'
         });
+        map.addSource('routes', {
+            type: 'geojson',
+            data: '/geojson/shapes.geojson'
+        });
+
+        map.addLayer({
+            id: 'route-lines',
+            type: 'line',
+            source: 'routes',
+            paint: {
+                'line-color': '#ff5722',
+                'line-width': 3
+            }
+        });
+
+        map.addLayer({
+            id: 'station-points',
+            type: 'circle',
+            source: 'stations',
+            paint: {
+                'circle-radius': 6,
+                'circle-color': '#007cbf'
+            }
+        });
+
+        // Optional popup on click
+        map.on('click', 'station-points', (e) => {
+            const name = e.features[0].properties.stop_name;
+            new maplibregl.Popup()
+                .setLngLat(e.lngLat)
+                .setText(name)
+                .addTo(map);
+        });
+
+        map.on('mouseenter', 'station-points', () => map.getCanvas().style.cursor = 'pointer');
+        map.on('mouseleave', 'station-points', () => map.getCanvas().style.cursor = '');
+    });
 </script>
 </body>

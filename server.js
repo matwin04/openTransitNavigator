@@ -92,30 +92,33 @@ app.get("/stations", async (req, res) => {
         res.status(500).send("Failed to load stations.");
     }
 });
-
-
 app.get("/stations/departures/:id", async (req, res) => {
     try {
         const db = await getDB();
         const stopId = req.params.id;
-
         const now = getPacificTimeString(); // "HH:MM:SS"
 
+        const stop = await db.get("SELECT * FROM stops WHERE stop_id = ?", stopId);
         const departures = await db.all(
-            `SELECT st.departure_time, t.trip_headsign, r.route_short_name, r.route_color, r.route_text_color
-       FROM stop_times st
-       JOIN trips t ON st.trip_id = t.trip_id
-       JOIN routes r ON t.route_id = r.route_id
-       WHERE st.stop_id = ?
-       AND TIME(st.departure_time) > TIME(?)
-       ORDER BY st.departure_time ASC
-       LIMIT 10`,
+            `SELECT st.departure_time,
+                    t.trip_headsign,
+                    r.route_short_name,
+                    r.route_color,
+                    r.route_text_color
+             FROM stop_times st
+             JOIN trips t ON st.trip_id = t.trip_id
+             JOIN routes r ON t.route_id = r.route_id
+             WHERE st.stop_id = ?
+               AND TIME(st.departure_time) > TIME(?)
+             ORDER BY st.departure_time ASC
+             LIMIT 15`,
             [stopId, now]
         );
 
         res.render("departures", {
             title: "Departures",
             departures,
+            stop,
             stop_id: stopId
         });
     } catch (err) {
