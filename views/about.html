@@ -65,25 +65,6 @@
         </style>
     </head>
     <body>
-        <div id="map"></div>
-        <script>
-            var map = new maplibregl.Map({
-                container: "map", // container id
-                style: "https://tiles.stadiamaps.com/styles/osm_bright.json", // style URL
-                center: [0, 0], // starting position [lng, lat]
-                zoom: 1 // starting zoom
-            });
-        </script>
-        <div id="legend">
-            <strong>Legend</strong>
-            <div class="legend-item">
-                <div class="legend-color" style="background: #0066cc"></div>
-                Subway/Light Rail
-            </div>
-            <div class="legend-item">
-                <div class="legend-color" style="background: black"></div>
-                Station
-            </div>
-        </div>
+        {{> navbar}}
     </body>
 </html>

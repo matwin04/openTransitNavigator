@@ -70,6 +70,14 @@ app.get("/routes", async (req, res) => {
 app.get("/map", (req, res) => {
     res.render("map", { title: "Open Transit Navigator" });
 });
+app.get("/routes", async (req, res) => {
+    const db = await getDB();
+    const routes = await db.all("SELECT * FROM routes");
+    res.render("routes", { routes });
+});
+app.get("/about", (req, res) => {
+    res.render("about");
+});
 
 app.get("/agencies", async (req, res) => {
     try {
