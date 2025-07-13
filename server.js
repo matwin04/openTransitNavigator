@@ -18,7 +18,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-await updateAndImportGtfs();
 const VIEWS_DIR = path.join(__dirname, "views");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const DB_PATH = path.join(PUBLIC_DIR, "gtfs.db");
