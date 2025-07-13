@@ -21,57 +21,6 @@
 {{> navbar }}
 <h1>OpenTransitNavigator</h1>
 <div id="map"></div>
-<script>
-    const map = new maplibregl.Map({
-        container: 'map',
-        style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json', // Better style
-        center: [-117.9223, 33.8687], // Default: Fullerton
-        zoom: 10
-    });
+<script src="/public/scripts/map.js"></script>
 
-    map.addControl(new maplibregl.NavigationControl(), 'top-right');
-
-    map.on('load', () => {
-        map.addSource('stations', {
-            type: 'geojson',
-            data: '/geojson/stations.geojson'
-        });
-        map.addSource('routes', {
-            type: 'geojson',
-            data: '/geojson/shapes.geojson'
-        });
-
-        map.addLayer({
-            id: 'route-lines',
-            type: 'line',
-            source: 'routes',
-            paint: {
-                'line-color': '#ff5722',
-                'line-width': 3
-            }
-        });
-
-        map.addLayer({
-            id: 'station-points',
-            type: 'circle',
-            source: 'stations',
-            paint: {
-                'circle-radius': 6,
-                'circle-color': '#007cbf'
-            }
-        });
-
-        // Optional popup on click
-        map.on('click', 'station-points', (e) => {
-            const name = e.features[0].properties.stop_name;
-            new maplibregl.Popup()
-                .setLngLat(e.lngLat)
-                .setText(name)
-                .addTo(map);
-        });
-
-        map.on('mouseenter', 'station-points', () => map.getCanvas().style.cursor = 'pointer');
-        map.on('mouseleave', 'station-points', () => map.getCanvas().style.cursor = '');
-    });
-</script>
 </body>

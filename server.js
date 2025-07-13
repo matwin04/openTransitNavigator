@@ -96,20 +96,23 @@ app.get("/stations/departures/:id", async (req, res) => {
     try {
         const db = await getDB();
         const stopId = req.params.id;
-        const now = getPacificTimeString(); // "HH:MM:SS"
+        const now = getPacificTimeString();
 
         const stop = await db.get("SELECT * FROM stops WHERE stop_id = ?", stopId);
+
         const departures = await db.all(
-            `SELECT st.departure_time,
-                    t.trip_headsign,
-                    r.route_short_name,
-                    r.route_color,
-                    r.route_text_color
+            `SELECT 
+                st.departure_time,
+                t.trip_short_name,
+                t.trip_headsign,
+                r.route_short_name,
+                r.route_color,
+                r.route_text_color
              FROM stop_times st
              JOIN trips t ON st.trip_id = t.trip_id
              JOIN routes r ON t.route_id = r.route_id
              WHERE st.stop_id = ?
-               AND TIME(st.departure_time) > TIME(?)
+             AND TIME(st.departure_time) > TIME(?)
              ORDER BY st.departure_time ASC
              LIMIT 15`,
             [stopId, now]
@@ -126,24 +129,67 @@ app.get("/stations/departures/:id", async (req, res) => {
         res.status(500).send("Failed to load departures.");
     }
 });
-app.get("/geojson/stops", async (req, res) => {
-    const db = await getDB();
-    const stops = await db.all("SELECT stop_id, stop_name, stop_lat, stop_lon FROM stops WHERE stop_lat IS NOT NULL AND stop_lon IS NOT NULL");
-    const geojson = {
-        type: "FeatureCollection",
-        features: stops.map(stop => ({
-            type: "Feature",
-            geometry: {
-                type: "Point",
-                coordinates: [parseFloat(stop.stop_lon), parseFloat(stop.stop_lat)]
-            },
-            properties: {
-                stop_id: stop.stop_id,
-                stop_name: stop.stop_name
+app.get("/geojson/stations.geojson", async (req, res) => {
+    try {
+        const db = await getDB();
+        const rows = await db.all("SELECT stop_id, stop_name, stop_lat, stop_lon FROM stops WHERE stop_lat IS NOT NULL AND stop_lon IS NOT NULL");
+
+        const geojson = {
+            type: "FeatureCollection",
+            features: rows.map(stop => ({
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: [stop.stop_lon, stop.stop_lat]
+                },
+                properties: {
+                    stop_id: stop.stop_id,
+                    stop_name: stop.stop_name
+                }
+            }))
+        };
+
+        res.json(geojson);
+    } catch (err) {
+        console.error("Error generating GeoJSON:", err);
+        res.status(500).send("Failed to generate GeoJSON");
+    }
+});
+app.get("/geojson/shapes.geojson", async (req, res) => {
+    try {
+        const db = await getDB();
+        const rows = await db.all(`
+            SELECT shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence
+            FROM shapes
+            ORDER BY shape_id, shape_pt_sequence
+        `);
+
+        // Group by shape_id
+        const shapes = {};
+        for (const row of rows) {
+            if (!shapes[row.shape_id]) {
+                shapes[row.shape_id] = [];
             }
-        }))
-    };
-    res.json(geojson);
+            shapes[row.shape_id].push([row.shape_pt_lon, row.shape_pt_lat]);
+        }
+
+        const geojson = {
+            type: "FeatureCollection",
+            features: Object.entries(shapes).map(([shape_id, coordinates]) => ({
+                type: "Feature",
+                geometry: {
+                    type: "LineString",
+                    coordinates
+                },
+                properties: { shape_id }
+            }))
+        };
+
+        res.json(geojson);
+    } catch (err) {
+        console.error("Error generating shape GeoJSON:", err);
+        res.status(500).send("Failed to generate shape GeoJSON");
+    }
 });
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);

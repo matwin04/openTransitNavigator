@@ -1,28 +1,51 @@
-const svg = d3.select("#map-svg");
-const g = svg.append("g");
-
-svg.call(
-  d3.zoom().on("zoom", function (event) {
-    g.attr("transform", event.transform);
-  })
-);
-
-const loadMap = (filename) => {
-  g.selectAll("*").remove(); // Clear previous map
-  d3.xml(`/public/maps/${filename}`)
-    .then((data) => {
-      const importedNode = document.importNode(data.documentElement, true);
-      g.node().appendChild(importedNode);
-    })
-    .catch((error) => {
-      console.error("Error loading SVG:", error);
+const map = new maplibregl.Map({
+    container: "map",
+    style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+    center: [-118.25, 34.05],
+    zoom: 9
+});
+map.addControl(new maplibregl.NavigationControl());
+map.on("load", () => {
+    // Routes (Shapes)
+    map.addSource('routes', {
+        type: 'geojson',
+        data: '/geojson/shapes.geojson'
     });
-};
 
-// Load initial map
-loadMap(document.getElementById("map-select").value);
+    map.addLayer({
+        id: 'route-lines',
+        type: 'line',
+        source: 'routes',
+        paint: {
+            'line-color': '#000000',
+            'line-width': 3
+        }
+    });
+    // Stations
+    map.addSource("stations", {
+        type: "geojson",
+        data: "/geojson/stations.geojson"
+    });
 
-// Change map when selection changes
-document.getElementById("map-select").addEventListener("change", function () {
-  loadMap(this.value);
+    map.addLayer({
+        id: "stations",
+        type: "circle",
+        source: "stations",
+        paint: {
+            "circle-radius": 5,
+            "circle-color": "#007cbf"
+        }
+    });
+
+
+
+
+    // Optional: station interactivity
+    map.on("click", "stations", (e) => {
+        const props = e.features[0].properties;
+        new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(`<strong>${props.stop_name}</strong><br><a href="/stations/departures/${props.stop_id}">View Departures</a>`)
+            .addTo(map);
+    });
 });
