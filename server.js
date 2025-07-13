@@ -18,7 +18,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-await updateAndImportGtfs();
 const VIEWS_DIR = path.join(__dirname, "views");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const DB_PATH = path.join(PUBLIC_DIR, "gtfs.db");
@@ -180,8 +179,7 @@ app.get("/geojson/stations.geojson", async (req, res) => {
     WHERE stop_lat IS NOT NULL
       AND stop_lon IS NOT NULL
       AND location_type = 1
-  `);
-
+    `);
     const geojson = {
         type: "FeatureCollection",
         features: stations.map(stop => ({
