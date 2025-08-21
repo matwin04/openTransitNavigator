@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{station.name}}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <link href="/styles/main.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<h1 class="">{{station.name}}</h1>
+<p>
+  {{station.address1}} {{station.address2}}<br />
+  {{station.city}}, {{station.state}} {{station.zip}}
+</p>
+
+<p>
+  {{station.tz}}
+</p>
+
+<h2>Trains serving this station</h2>
+<ul>
+  {{#each station.trains}}
+  <li>{{this}}</li>
+  {{/each}}
+</ul>
+</body>
+</html>

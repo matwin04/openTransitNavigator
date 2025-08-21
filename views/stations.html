@@ -1,39 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>Stations</title>
-    <link rel="icon" href="/public/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 <body>
-<i>PAGE CURRENTLY IN TESTING</i>
 {{> navbar}}
-<table class="table is-fullwidth">
-
+<table>
     <thead>
         <tr>
             <th>Station</th>
-            <th>View Departures</th>
+            <th>Code</th>
+            <th>Time Zone</th>
+            <th>Address</th>
         </tr>
     </thead>
     <tbody>
     {{#each stations}}
     <tr>
-
         <td>
-            <span class="icon">
-                <i class="fa fa-train"></i>
-            </span>
-            {{stop_name}}</td>
-        <td>
-            <a href="/stations/departures/{{stop_id}}">View</a>
+            <a href="/stations/{{code}}/">{{name}}</a>
         </td>
+        <td>{{code}}</td>
+        <td>{{tz}}</td>
+        <td>{{city}}</td>
+        <td>{{state}}</td>
     </tr>
     {{/each}}
     </tbody>
 </table>
-
 </body>
-</html>

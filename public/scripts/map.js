@@ -6,46 +6,91 @@ const map = new maplibregl.Map({
 });
 map.addControl(new maplibregl.NavigationControl());
 map.on("load", () => {
-    // Routes (Shapes)
-    map.addSource('routes', {
-        type: 'geojson',
-        data: '/geojson/shapes.geojson'
-    });
-
-    map.addLayer({
-        id: 'route-lines',
-        type: 'line',
-        source: 'routes',
-        paint: {
-            'line-color': '#000000',
-            'line-width': 3
-        }
-    });
-    // Stations
+    //Add Trains
+    
+    map.addSource("trains",{
+        type: "geojson",
+        data: "/api/trains",
+    })
+    //Add Stations
     map.addSource("stations", {
         type: "geojson",
-        data: "/geojson/stations.geojson"
+        data: "/api/stations",
     });
-
     map.addLayer({
-        id: "stations",
+        id: "trains-layer",
+        type: "circle",
+        source: "trains",
+        paint: {
+            "circle-radius": 4,
+            "circle-color": "#e53935",
+            "circle-stroke-width": 1,
+            "circle-stroke-color": "#fff"
+        }
+    });
+    map.addLayer({
+        id: "trains-labels",
+        type: "symbol",
+        source: "trains",
+        layout: {
+            "text-field": ["get", "trainNum"],
+            "text-size": 10,
+            "text-offset": [0, 1],
+            "text-anchor": "top"
+        },
+        paint: {
+            "text-halo-color": "#fff",
+            "text-halo-width": 1
+        }
+    });
+    // Add a circle layer for station points
+    map.addLayer({
+        id: "stations-layer",
         type: "circle",
         source: "stations",
         paint: {
             "circle-radius": 5,
-            "circle-color": "#007cbf"
+            "circle-color": "#007cbf",
+            "circle-stroke-width": 1,
+            "circle-stroke-color": "#fff"
         }
     });
-
-
-
-
+    
+    // Add labels for station names
+    map.addLayer({
+        id: "stations-labels",
+        type: "symbol",
+        source: "stations",
+        layout: {
+            "text-field": ["get", "name"],
+            "text-offset": [0, 1],
+            "text-anchor": "top"
+        },
+        paint: {
+            "text-color": "#333",
+            "text-halo-color": "#fff",
+            "text-halo-width": 1
+        }
+    });
     // Optional: station interactivity
-    map.on("click", "stations", (e) => {
-        const props = e.features[0].properties;
+    map.on("click", "stations-layer", (e) => {
+        const f = e.features[0];
+        const p = f.properties;
         new maplibregl.Popup()
-            .setLngLat(e.lngLat)
-            .setHTML(`<strong>${props.stop_name}</strong><br><a href="/stations/departures/${props.stop_id}">View Departures</a>`)
+        .setLngLat(f.geometry.coordinates)
+        .setHTML(`<strong>${p.name}</strong> (${p.code})<br>${p.city}, ${p.state}`)
+        .addTo(map);
+    });
+    map.on("click", "trains-layer", (e) => {
+        const f = e.features[0];
+        const p = f.properties;
+        new maplibregl.Popup()
+            .setLngLat(f.geometry.coordinates)
+            .setHTML(`
+      <strong>${p.routeName || "Train"} ${p.trainNum || ""}</strong><br/>
+      <strong>Next Stop: </strong>${p.eventName || ""}<br/>
+      Speed: ${p.velocity ? Math.round(p.velocity) + " mph" : "N/A"}
+    `)
             .addTo(map);
     });
 });

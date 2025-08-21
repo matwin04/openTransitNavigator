@@ -1,28 +1,8 @@
-<head>
-    <link href="/public/styles/main.css" rel="stylesheet" type="text/css">
-    <link href="/public/styles/navbar.css" rel="stylesheet" type="text/css">
-    <title></title>
-</head>
-<nav>
-    <div>
-        <a href="/" class="navlink">Home</a>
-        <a href="/stations" class="navlink">Stations</a>
-        <a href="/routes" class="navlink">Routes</a>
-        <a href="/agencies" class="navlink"> Agencies</a>
-        <a href="/about" class="navlink">About</a>
-        
-    </div>
-    <div>
-        <span id="clock"></span>
-    </div>
-</nav>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
 
-<script>
-function updateClock() {
-    const now = new Date();
-    const options = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-    document.getElementById('clock').textContent = now.toLocaleTimeString([], options);
-}
-setInterval(updateClock, 1000);
-updateClock();
-</script>
+<nav>
+
+    <a href="/">Home</a>
+    <a href="/trains">Trains</a>
+    <a href="/stations">Stations</a>
+</nav>
