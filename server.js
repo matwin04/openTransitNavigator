@@ -25,9 +25,11 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 
 // Home route with trains
 app.get("/", async (req, res) => {
-
     res.render("index");
 });
+app.get("/about",(req,res)=>{
+    res.render("about");
+})
 
 app.get("/trains", async (req, res) => {
     try {
