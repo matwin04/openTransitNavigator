@@ -46,6 +46,7 @@ app.get("/trains", async (req, res) => {
         res.status(500).send("Failed to fetch trains");
     }
 });
+
 // Stations route
 app.get("/api/trains",async (req,res)=>{
     try {
@@ -107,20 +108,28 @@ app.get("/stations", async (req, res) => {
     const stations = await amtrak.fetchAllStations();
     res.render("stations", { stations });
 });
-app.get("/stations/:code", async (req, res) => {
-    const code = req.params.code.toUpperCase();
+// GET /trains/:num → fetch that train directly from Amtraker
+app.get("/trains/:num", async (req, res) => {
+    const num = req.params.num;
     try {
-        const response = await fetch("https://api-v3.amtraker.com/v3/stations");
-        const stations = await response.json();
-        const station = stations[code];
-        if (!station) {
-            return res.status(404).send(`Station ${code} not found`);
+        const r = await fetch(`https://api-v3.amtraker.com/v3/trains/${num}`);
+        if (!r.ok) {
+            return res.status(r.status).send(`Train ${num} not found`);
         }
-        // Render single station view
-        res.render("stationinfo", { station });
+        const data = await r.json();
+        // Each key is the train number, with an array of train objects
+        const trainArr = data[num];
+        if (!trainArr || trainArr.length === 0) {
+            return res.status(404).send(`Train ${num} not found`);
+        }
+
+        const train = trainArr[0]; // usually just one object
+
+        // Render with train info + station list
+        res.render("traininfo", { train, stations: train.stations });
     } catch (err) {
         console.error("❌ API Error:", err);
-        res.status(500).send("Failed to fetch stations");
+        res.status(500).send("Failed to fetch train");
     }
 });
 
