@@ -1,21 +1,21 @@
 const map = new maplibregl.Map({
     container: "map",
-    style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+    style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
     center: [-118.25, 34.05],
     zoom: 9
 });
 map.addControl(new maplibregl.NavigationControl());
 map.on("load", () => {
     //Add Trains
-    
-    map.addSource("trains",{
+
+    map.addSource("trains", {
         type: "geojson",
-        data: "/api/trains",
-    })
+        data: "/api/trains"
+    });
     //Add Stations
     map.addSource("stations", {
         type: "geojson",
-        data: "/api/stations",
+        data: "/api/stations"
     });
     map.addLayer({
         id: "trains-layer",
@@ -55,7 +55,7 @@ map.on("load", () => {
             "circle-stroke-color": "#fff"
         }
     });
-    
+
     // Add labels for station names
     map.addLayer({
         id: "stations-labels",
@@ -77,20 +77,22 @@ map.on("load", () => {
         const f = e.features[0];
         const p = f.properties;
         new maplibregl.Popup()
-        .setLngLat(f.geometry.coordinates)
-        .setHTML(`<strong>${p.name}</strong> (${p.code})<br>${p.city}, ${p.state}`)
-        .addTo(map);
+            .setLngLat(f.geometry.coordinates)
+            .setHTML(`<strong>${p.name}</strong> (${p.code})<br>${p.city}, ${p.state}`)
+            .addTo(map);
     });
     map.on("click", "trains-layer", (e) => {
         const f = e.features[0];
         const p = f.properties;
         new maplibregl.Popup()
             .setLngLat(f.geometry.coordinates)
-            .setHTML(`
-      <strong>${p.routeName || "Train"} ${p.trainNum || ""}</strong><br/>
-      <strong>Next Stop: </strong>${p.eventName || ""}<br/>
-      Speed: ${p.velocity ? Math.round(p.velocity) + " mph" : "N/A"}
-    `)
+            .setHTML(
+                `
+              <strong>${p.routeName || " "}<a href="/trains/${p.trainNum}">${p.trainNum}</a></strong><br/>
+              <strong>Next Stop: </strong>${p.eventName || ""}<br/>
+              Speed: ${p.velocity ? Math.round(p.velocity) + " mph" : "N/A"}
+            `
+            )
             .addTo(map);
     });
 });
