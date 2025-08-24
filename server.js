@@ -5,6 +5,7 @@ import { engine } from "express-handlebars";
 import { fileURLToPath } from "url";
 import * as amtrak from "amtrak";
 import fetch from "node-fetch";
+import req from "express/lib/request.js";
 
 dotenv.config();
 
@@ -109,6 +110,24 @@ app.get("/stations", async (req, res) => {
     res.render("stations", { stations });
 });
 // GET /trains/:num → fetch that train directly from Amtraker
+app.get("/stations/:code", async (req, res) => {
+    try {
+        const code = req.params.code.toUpperCase(); // Amtrak codes are uppercase
+        const stationResp = await amtrak.fetchStation(code);
+        const station = stationResp[code];
+        console.log(station);
+        if (!station) {
+            return res.status(404).send("Station not found");
+        }
+        res.render("stationinfo", {
+            code,
+            station
+        });
+    } catch (err) {
+        console.error("Error fetching station:", err);
+        res.status(500).send("Failed to fetch station info");
+    }
+});
 app.get("/trains/:num", async (req, res) => {
     const num = req.params.num;
     try {

@@ -27,7 +27,9 @@
                 <tbody>
                     {{#each stations}}
                     <tr>
-                        <td>{{code}}</td>
+                        <td>
+                            <a href="/stations/{{code}}">{{code}}</a>
+                        </td>
                         <td>{{name}}</td>
                         <td><span class="tag is-primary">{{status}}</span></td>
                         <td class="time-cell" data-time="{{schDep}}">{{schDep}}</td>

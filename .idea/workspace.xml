@@ -7,6 +7,8 @@
     <list default="true" id="55437ce9-b232-49bf-9c37-106ebc09d8c3" name="Changes" comment="OTN Favicon Live">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/stationinfo.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/stationinfo.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/traininfo.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/traininfo.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -142,6 +144,7 @@
       <workItem from="1752358229484" duration="1512000" />
       <workItem from="1755808975459" duration="293000" />
       <workItem from="1755810254414" duration="888000" />
+      <workItem from="1756067990786" duration="1823000" />
     </task>
     <task id="LOCAL-00001" summary="Somewhat working now">
       <option name="closed" value="true" />

@@ -7,21 +7,27 @@
     <link href="/styles/main.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<h1 class="">{{station.name}}</h1>
-<p>
-  {{station.address1}} {{station.address2}}<br />
-  {{station.city}}, {{station.state}} {{station.zip}}
-</p>
+{{> navbar}}
 
-<p>
-  {{station.tz}}
-</p>
+<br>
+<h1 class="title">{{code}}  {{station.name}}</h1>
+<p>Code: {{station.code}}</p>
+<p>City: {{station.city}}</p>
+<p>State: {{station.state}}</p>
 
-<h2>Trains serving this station</h2>
-<ul>
-  {{#each station.trains}}
-  <li>{{this}}</li>
-  {{/each}}
-</ul>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Station</th>
+        </tr>
+    </thead>
+    <tbody>
+    {{#each stations.trains}}
+    <tr>
+        <td></td>
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
 </body>
 </html>
