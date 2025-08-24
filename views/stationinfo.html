@@ -10,23 +10,31 @@
 {{> navbar}}
 
 <br>
-<h1 class="title">{{code}}  {{station.name}}</h1>
-<p>Code: {{station.code}}</p>
-<p>City: {{station.city}}</p>
-<p>State: {{station.state}}</p>
+<h1 class="title">{{code}} — {{station.name}}</h1>
+<p><strong>Code:</strong> {{station.code}}</p>
+<p><strong>City:</strong> {{station.city}}</p>
+<p><strong>State:</strong> {{station.state}}</p>
 
-<table class="table">
+<table class="table is-striped is-hoverable">
     <thead>
-        <tr>
-            <th>Station</th>
-        </tr>
+    <tr>
+        <th>Train ID</th>
+    </tr>
     </thead>
     <tbody>
-    {{#each stations.trains}}
+    {{#if trains.length}}
+    {{#each trains}}
     <tr>
-        <td></td>
+        <td>{{trainNum}}</td>
+        <td>{{routeName}}</td>
+        <td>{{destName}}</td>
+        <td>{{timeFor stations ../code}}</td>
+        <td>{{statusMsg}}</td>
     </tr>
     {{/each}}
+    {{else}}
+    <tr><td colspan="6">No trains found.</td></tr>
+    {{/if}}
     </tbody>
 </table>
 </body>

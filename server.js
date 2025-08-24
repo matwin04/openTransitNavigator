@@ -24,14 +24,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "public")));
 
-// Home route with trains
 app.get("/", async (req, res) => {
     res.render("index");
 });
 app.get("/about",(req,res)=>{
     res.render("about");
-})
-
+});
 app.get("/trains", async (req, res) => {
     try {
         const response = await fetch("https://api-v3.amtraker.com/v3/trains");
@@ -47,14 +45,10 @@ app.get("/trains", async (req, res) => {
         res.status(500).send("Failed to fetch trains");
     }
 });
-
-// Stations route
 app.get("/api/trains",async (req,res)=>{
     try {
         const r = await fetch("https://api-v3.amtraker.com/v3/trains");
         const trainsObj = await r.json();
-
-        // Flatten: each key is a trainNum -> array of train objects
         const features = Object.entries(trainsObj).flatMap(([trainNum, arr]) =>
             (arr || [])
                 .filter(t => Number.isFinite(t.lon) && Number.isFinite(t.lat))
@@ -109,22 +103,37 @@ app.get("/stations", async (req, res) => {
     const stations = await amtrak.fetchAllStations();
     res.render("stations", { stations });
 });
-// GET /trains/:num → fetch that train directly from Amtraker
 app.get("/stations/:code", async (req, res) => {
     try {
-        const code = req.params.code.toUpperCase(); // Amtrak codes are uppercase
-        const stationResp = await amtrak.fetchStation(code);
-        const station = stationResp[code];
-        console.log(station);
-        if (!station) {
-            return res.status(404).send("Station not found");
-        }
+        const code = req.params.code.toUpperCase();
+        const station = (await amtrak.fetchStation(code))[code];
+        if (!station) return res.status(404).send("Station not found");
+
+        // raw Train objects (1 line per train)
+        const trains = (await Promise.all(
+            (station.trains || []).map(async (id) => {
+                try { const r = await amtrak.fetchTrain(id); const k = Object.keys(r)[0]; return k && r[k]?.[0] || null; }
+                catch { return null; }
+            })
+        )).filter(Boolean);
+
         res.render("stationinfo", {
             code,
-            station
+            station,
+            trains,
+            // helper scoped to this render only
+            helpers: {
+                timeFor(stations, c) {
+                    const s = (stations || []).find(x => x.code === c);
+                    const iso = s?.dep || s?.schDep || s?.arr || s?.schArr;
+                    if (!iso) return "—";
+                    const d = new Date(iso);
+                    return isNaN(d) ? "—" : d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+                }
+            }
         });
     } catch (err) {
-        console.error("Error fetching station:", err);
+        console.error(err);
         res.status(500).send("Failed to fetch station info");
     }
 });
