@@ -1,0 +1,16 @@
+{
+  "metrolink": {
+    "agencyId": "metrolink",
+    "vehicle_url": "https://metrolink-gtfsrt.gbsdigital.us/feed/gtfsrt-vehicles",
+    "trip_url": "https://metrolink-gtfsrt.gbsdigital.us/feed/gtfsrt-trips",
+    "api_key": "gMpUXrGPJJ8X9Pp2OivQC1czi046utCMabRM3XQg"
+  },
+  "octa": {
+    "agencyId": "octa",
+    "vehicle_url": "https://api.octa.net/GTFSRealTime/protoBuf/VehiclePositions.aspx"
+  },
+  "lametro_rail": {
+    "agencyId": "lametro_rail",
+    "vehicle_url": "https://transit.land/api/v2/rest/feeds/f-metro~losangeles~rail~rt/download_latest_rt/vehicle_positions.pb?apikey=WOo9vL8ECMWN76EcKjsNGfo8YgNZ7c2u"
+  }
+}

@@ -17,7 +17,12 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "express-handlebars": "^8.0.3",
+    "express-jsdoc-swagger": "^1.8.0",
+    "express-oas-generator": "^1.0.48",
+    "gtfs-realtime-bindings": "^1.1.1",
     "maplibre-gl": "^5.6.2",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   }
 }

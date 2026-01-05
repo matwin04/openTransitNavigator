@@ -3,18 +3,28 @@ import path from "path";
 import dotenv from "dotenv";
 import { engine } from "express-handlebars";
 import { fileURLToPath } from "url";
-import * as amtrak from "amtrak";
+import * as bikes from "./bikes.js";
 import fetch from "node-fetch";
-import req from "express/lib/request.js";
-
+import swaggerUi from "swagger-ui-express";
+import fs from "node:fs/promises";
+import GtfsRealtimeBindings from "gtfs-realtime-bindings";
+import {feedToVehicleGeoJSON} from "./converter.js";
 dotenv.config();
 
 const app = express();
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const VIEWS_DIR = path.join(__dirname, "views");
 const PARTIALS_DIR = path.join(VIEWS_DIR, "partials");
+const openapi = JSON.parse(
+    await fs.readFile(new URL("./apispec/openapi.json", import.meta.url), "utf8")
+);
+const agencies = JSON.parse(
+    await fs.readFile(new URL("./agencies.json", import.meta.url), "utf8")
+);
 
 app.engine("html", engine({ extname: ".html", defaultLayout: false, partialsDir: PARTIALS_DIR }));
 app.set("view engine", "html");
@@ -23,148 +33,66 @@ app.set("views", VIEWS_DIR);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "public")));
-
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapi));
 app.get("/", async (req, res) => {
     res.render("index");
 });
-app.get("/about",(req,res)=>{
+
+app.get("/api/bikes/stations", async (req, res) => {
+    const data = await bikes.getAllStations();
+    res.json(data);
+});
+app.get("/api/bikes/stations/:stationId", async (req, res) => {
+    res.json("test");
+});
+app.get("/api/trips/test",async (req, res) => {
+    const response = await fetch("https://metrolink-gtfsrt.gbsdigital.us/feed/gtfsrt-trips", {
+        "headers": {
+            "x-api-key": "gMpUXrGPJJ8X9Pp2OivQC1czi046utCMabRM3XQg",
+        }
+    });
+    console.log(response);
+    const buff = await response.arrayBuffer();
+    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buff));
+    const obj = GtfsRealtimeBindings.transit_realtime.FeedMessage.toObject(feed);
+    res.json(obj);
+});
+app.get("/api/vehicles/:agencyId", async (req, res) => {
+    const agencyId = req.params.agencyId;
+    const agency = agencies[agencyId];
+
+    if (!agency?.vehicle_url) {
+        return res.status(404).json({ error: `Unknown agencyId: ${agencyId}` });
+    }
+
+    const headers = {};
+    if (agency.api_key) headers["x-api-key"] = agency.api_key;
+    const response = await fetch(agency.vehicle_url, { headers });
+    console.log(response);
+    const buffer = await response.arrayBuffer();
+    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
+
+    const geojson = feedToVehicleGeoJSON(feed);
+
+    // tag each feature with agencyId (so your popups/layers can filter)
+    for (const f of geojson.features) f.properties.agencyId = agencyId;
+
+    res.json(geojson);
+})
+app.get("/api/overview", (req, res) => {
+    res.render("overview");
+});
+
+app.get("/about", (req, res) => {
     res.render("about");
 });
-app.get("/trains", async (req, res) => {
-    try {
-        const response = await fetch("https://api-v3.amtraker.com/v3/trains");
-        const trainsObj = await response.json();
 
-        // Flatten trains for easy Handlebars rendering
-        const trains = Object.entries(trainsObj).flatMap(([trainNum, arr]) =>
-            (arr || []).map((t) => ({ ...t, trainNum }))
-        );
-        res.render("index", { trains });
-    } catch (err) {
-        console.error("❌ API Error:", err);
-        res.status(500).send("Failed to fetch trains");
-    }
-});
-app.get("/api/trains",async (req,res)=>{
-    try {
-        const r = await fetch("https://api-v3.amtraker.com/v3/trains");
-        const trainsObj = await r.json();
-        const features = Object.entries(trainsObj).flatMap(([trainNum, arr]) =>
-            (arr || [])
-                .filter(t => Number.isFinite(t.lon) && Number.isFinite(t.lat))
-                .map(t => ({
-                    type: "Feature",
-                    geometry: { type: "Point", coordinates: [t.lon, t.lat] },
-                    properties: {
-                        trainNum: t.trainNum ?? trainNum,
-                        trainID: t.trainID,
-                        routeName: t.routeName,
-                        provider: t.providerShort || t.provider,
-                        eventName: t.eventName,
-                        heading: t.heading,
-                        velocity: t.velocity,
-                        updatedAt: t.updatedAt
-                    }
-                }))
-        );
-
-        res.json({ type: "FeatureCollection", features });
-    } catch (e) {
-        console.error("Failed to fetch trains:", e);
-        res.status(500).json({ error: "Failed to fetch trains" });
-    }
-});
-app.get("/api/stations", async (req, res) => {
-    try {
-        const r = await fetch("https://api-v3.amtraker.com/v3/stations");
-        const stations = await r.json();
-        
-        const features = Object.entries(stations).map(([code, s]) => ({
-            type: "Feature",
-            geometry: {
-                type: "Point",
-                coordinates: [s.lon, s.lat],
-            },
-            properties: {
-                code,
-                name: s.name,
-                city: s.city,
-                state: s.state,
-            },
-        }));
-        
-        res.json({ type: "FeatureCollection", features });
-    } catch (e) {
-        console.error("X Failed to fetch stations:", e);
-        res.status(500).json({ error: "Failed to fetch stations" });
-    }
-});
-app.get("/stations", async (req, res) => {
-    const stations = await amtrak.fetchAllStations();
-    res.render("stations", { stations });
-});
-app.get("/stations/:code", async (req, res) => {
-    try {
-        const code = req.params.code.toUpperCase();
-        const station = (await amtrak.fetchStation(code))[code];
-        if (!station) return res.status(404).send("Station not found");
-
-        // raw Train objects (1 line per train)
-        const trains = (await Promise.all(
-            (station.trains || []).map(async (id) => {
-                try { const r = await amtrak.fetchTrain(id); const k = Object.keys(r)[0]; return k && r[k]?.[0] || null; }
-                catch { return null; }
-            })
-        )).filter(Boolean);
-
-        res.render("stationinfo", {
-            code,
-            station,
-            trains,
-            // helper scoped to this render only
-            helpers: {
-                timeFor(stations, c) {
-                    const s = (stations || []).find(x => x.code === c);
-                    const iso = s?.dep || s?.schDep || s?.arr || s?.schArr;
-                    if (!iso) return "—";
-                    const d = new Date(iso);
-                    return isNaN(d) ? "—" : d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-                }
-            }
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Failed to fetch station info");
-    }
-});
-app.get("/trains/:num", async (req, res) => {
-    const num = req.params.num;
-    try {
-        const r = await fetch(`https://api-v3.amtraker.com/v3/trains/${num}`);
-        if (!r.ok) {
-            return res.status(r.status).send(`Train ${num} not found`);
-        }
-        const data = await r.json();
-        // Each key is the train number, with an array of train objects
-        const trainArr = data[num];
-        if (!trainArr || trainArr.length === 0) {
-            return res.status(404).send(`Train ${num} not found`);
-        }
-
-        const train = trainArr[0]; // usually just one object
-
-        // Render with train info + station list
-        res.render("traininfo", { train, stations: train.stations });
-    } catch (err) {
-        console.error("❌ API Error:", err);
-        res.status(500).send("Failed to fetch train");
-    }
-});
-
+// START SERVER
 if (!process.env.VERCEL && !process.env.NOW_REGION) {
     const PORT = process.env.PORT || 8088;
     app.listen(PORT, () => {
-        console.log(`✅ Server running on http://localhost:${PORT}`);
+        console.log(`Server running: http://localhost:${PORT}`);
+        console.log(`📘 Auto-generated API docs will appear at /api-docs`);
     });
 }
 
