@@ -23,11 +23,11 @@ map.on("load", () => {
 
     map.addSource('metrolink', {
         type: "geojson",
-        data: "/api/vehicles/metrolink"
+        data: "/api/vehicles/metrolink.geojson"
     });
     map.addSource('octa', {
         type: "geojson",
-        data: "/api/vehicles/octa"
+        data: "/api/vehicles/octa.geojson"
     });
     //Add Stations
     map.addSource("stations", {
@@ -36,7 +36,7 @@ map.on("load", () => {
     });
     map.addSource("lametro_rail",{
         type: "geojson",
-        data: "/api/vehicles/lametro_rail"
+        data: "/api/vehicles/lametro_rail.geojson"
     })
     map.addLayer({
         id: "metrolink-layer",
