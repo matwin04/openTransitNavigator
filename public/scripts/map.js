@@ -110,9 +110,13 @@ map.on("load", () => {
             .setLngLat(f.geometry.coordinates)
             .setHTML(
                 `
-              <strong>${p.routeId || " "}<a href="/trains/${p.trainNum}">${p.trainNum}</a></strong><br/>
-              <strong>Next Stop: </strong>${p.eventName || ""}<br/>
-              Speed: ${p.speed ? Math.round(p.speed) + " mph" : "N/A"}
+                <div class="popup">
+                  <h2>${p.id}</h2>
+                  <b>${p.agencyId}-${p.routeId || " "}</b>
+                  <br>
+                    Speed: ${p.speed ? Math.round(p.speed) + " mph" : "N/A"}
+                </div>
+              
             `
             )
             .addTo(map);

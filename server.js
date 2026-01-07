@@ -37,7 +37,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapi));
 app.get("/", async (req, res) => {
     res.render("index");
 });
-
 app.get("/api/bikes/stations", async (req, res) => {
     const data = await bikes.getAllStations();
     res.json(data);
@@ -57,6 +56,28 @@ app.get("/api/trips/test",async (req, res) => {
     const obj = GtfsRealtimeBindings.transit_realtime.FeedMessage.toObject(feed);
     res.json(obj);
 });
+app.get("/api/vehicles/:agencyId.geojson", async (req, res) => {
+    const agencyId = req.params.agencyId;
+    const agency = agencies[agencyId];
+    
+    if (!agency?.vehicle_url) {
+        return res.status(404).json({ error: `Unknown agencyId: ${agencyId}` });
+    }
+    
+    const headers = {};
+    if (agency.api_key) headers["x-api-key"] = agency.api_key;
+    const response = await fetch(agency.vehicle_url, { headers });
+    console.log(agency.vehicle_url);
+    const buffer = await response.arrayBuffer();
+    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
+    
+    const geojson = feedToVehicleGeoJSON(feed);
+    
+    // tag each feature with agencyId (so your popups/layers can filter)
+    for (const f of geojson.features) f.properties.agencyId = agencyId;
+    
+    res.json(geojson);
+});
 app.get("/api/vehicles/:agencyId", async (req, res) => {
     const agencyId = req.params.agencyId;
     const agency = agencies[agencyId];
@@ -68,17 +89,12 @@ app.get("/api/vehicles/:agencyId", async (req, res) => {
     const headers = {};
     if (agency.api_key) headers["x-api-key"] = agency.api_key;
     const response = await fetch(agency.vehicle_url, { headers });
-    console.log(response);
+    console.log(agency.vehicle_url);
     const buffer = await response.arrayBuffer();
     const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
-
-    const geojson = feedToVehicleGeoJSON(feed);
-
-    // tag each feature with agencyId (so your popups/layers can filter)
-    for (const f of geojson.features) f.properties.agencyId = agencyId;
-
-    res.json(geojson);
-})
+    const obj = GtfsRealtimeBindings.transit_realtime.FeedMessage.toObject(feed);
+    res.json(obj);
+});
 app.get("/api/overview", (req, res) => {
     res.render("overview");
 });
