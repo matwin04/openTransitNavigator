@@ -58,7 +58,62 @@ map.on("load", () => {
         type: "geojson",
         data: "/api/vehicles/lametro_rail.geojson"
     })
-
+    map.addLayer({
+        id: "metrolink-layer",
+        type: "circle",
+        source: "metrolink",
+        paint: {
+            "circle-radius":5,
+            "circle-color": [
+                "match",
+                ["get", "routeId"],
+                "Antelope Valley Line",larouteColors["Antelope Valley Line"],
+                "San Bernardino Line",larouteColors["San Bernardino Line"],
+                "Ventura County Line",larouteColors["Ventura County Line"],
+                "Orange County Line",larouteColors["Orange County Line"],
+                larouteColors["unknown"]
+            ],
+        }
+    });
+    map.addLayer({
+        id: "octa-layer",
+        type: "circle",
+        source: "octa",
+        paint: {
+            "circle-radius":2.5,
+            "circle-color":"#ff6000",
+        }
+    });
+    map.addLayer({
+        id: "lametro_rail-layer",
+        type: "circle",
+        source: "lametro_rail",
+        paint: {
+            "circle-radius": 5,
+            "circle-color": [
+                "match",
+                ["get", "routeId"],
+                "801", larouteColors["801"],
+                "802", larouteColors["802"],
+                "803", larouteColors["803"],
+                "804", larouteColors["804"],
+                "805", larouteColors["805"],
+                "807", larouteColors["807"],
+                larouteColors["unknown"]
+            ]
+        }
+    });
+    map.addLayer({
+        id: "stations-layer",
+        type: "circle",
+        source: "stations",
+        paint: {
+            "circle-radius": 2,
+            "circle-color": "#007cbf",
+            "circle-stroke-width": 1,
+            "circle-stroke-color": "#fff"
+        }
+    });
     map.addLayer({
         id: "ws",
         type: "circle",
