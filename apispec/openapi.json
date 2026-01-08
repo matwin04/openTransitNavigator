@@ -12,13 +12,30 @@
     },
     {
 
-      "url": "https"
+      "url": "https://open-transit-navigator.vercel.app/"
     }
   ],
   "paths": {
-    "/api/vehicles/test": {
+    "/api/vehicles/": {
       "get": {
-        "description": "Test URL",
+        "description": "New endpoint",
+        "responses": {
+          "200": {
+            "description": "New response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "": ""
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/trips/": {
+      "get": {
+        "description": "New endpoint",
         "responses": {
           "200": {
             "description": "New response",

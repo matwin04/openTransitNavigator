@@ -25,7 +25,22 @@ const openapi = JSON.parse(
 const agencies = JSON.parse(
     await fs.readFile(new URL("./agencies.json", import.meta.url), "utf8")
 );
-
+async function fetchGtfsRtFeed(agency, urlField) {
+    if (!agency?.[urlField]) {
+        throw new Error(`Agency does not have ${urlField}`);
+    }
+    const headers = {};
+    if (agency.api_key) headers["x-api-key"] = agency.api_key;
+    const response = await fetch(agency[urlField], { headers });
+    if (!response.ok) {
+        throw new Error(`Upstream GTFS-RT error: ${response.status}`);
+    }
+    const buffer = await response.arrayBuffer();
+    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
+        new Uint8Array(buffer)
+    );
+    return GtfsRealtimeBindings.transit_realtime.FeedMessage.toObject(feed);
+}
 app.engine("html", engine({ extname: ".html", defaultLayout: false, partialsDir: PARTIALS_DIR }));
 app.set("view engine", "html");
 app.set("views", VIEWS_DIR);
@@ -37,68 +52,71 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapi));
 app.get("/", async (req, res) => {
     res.render("index");
 });
-app.get("/api/bikes/stations", async (req, res) => {
-    const data = await bikes.getAllStations();
-    res.json(data);
-});
-app.get("/api/bikes/stations/:stationId", async (req, res) => {
-    res.json("test");
-});
-app.get("/api/trips/test",async (req, res) => {
-    const response = await fetch("https://metrolink-gtfsrt.gbsdigital.us/feed/gtfsrt-trips", {
-        "headers": {
-            "x-api-key": "gMpUXrGPJJ8X9Pp2OivQC1czi046utCMabRM3XQg",
-        }
-    });
-    console.log(response);
-    const buff = await response.arrayBuffer();
-    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buff));
-    const obj = GtfsRealtimeBindings.transit_realtime.FeedMessage.toObject(feed);
-    res.json(obj);
-});
 app.get("/api/vehicles/:agencyId.geojson", async (req, res) => {
-    const agencyId = req.params.agencyId;
-    const agency = agencies[agencyId];
-    
-    if (!agency?.vehicle_url) {
-        return res.status(404).json({ error: `Unknown agencyId: ${agencyId}` });
+    try {
+        const agencyId = req.params.agencyId;
+        const agency = agencies[agencyId];
+        if (!agency) return res.status(404).json({ error: "Unknown agency" });
+        const obj = await fetchGtfsRtFeed(agency, "vehicle_url");
+        // If your converter expects decoded feed instead of object:
+        const geojson = feedToVehicleGeoJSON(
+            GtfsRealtimeBindings.transit_realtime.FeedMessage.fromObject(obj)
+        );
+
+        for (const f of geojson.features) f.properties.agencyId = agencyId;
+        res.json(geojson);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
     }
-    
-    const headers = {};
-    if (agency.api_key) headers["x-api-key"] = agency.api_key;
-    const response = await fetch(agency.vehicle_url, { headers });
-    console.log(agency.vehicle_url);
-    const buffer = await response.arrayBuffer();
-    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
-    
-    const geojson = feedToVehicleGeoJSON(feed);
-    
-    // tag each feature with agencyId (so your popups/layers can filter)
-    for (const f of geojson.features) f.properties.agencyId = agencyId;
-    
-    res.json(geojson);
 });
 app.get("/api/vehicles/:agencyId", async (req, res) => {
-    const agencyId = req.params.agencyId;
-    const agency = agencies[agencyId];
+    try {
+        const agency = agencies[req.params.agencyId];
+        if (!agency) return res.status(404).json({ error: "Unknown agency" });
 
-    if (!agency?.vehicle_url) {
-        return res.status(404).json({ error: `Unknown agencyId: ${agencyId}` });
+        const obj = await fetchGtfsRtFeed(agency, "vehicle_url");
+        res.json(obj);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
     }
-
-    const headers = {};
-    if (agency.api_key) headers["x-api-key"] = agency.api_key;
-    const response = await fetch(agency.vehicle_url, { headers });
-    console.log(agency.vehicle_url);
-    const buffer = await response.arrayBuffer();
-    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(new Uint8Array(buffer));
-    const obj = GtfsRealtimeBindings.transit_realtime.FeedMessage.toObject(feed);
-    res.json(obj);
+});
+app.get("/api/trips/:agencyId", async (req, res) => {
+    try {
+        const agency = agencies[req.params.agencyId];
+        if (!agency) return res.status(404).json({ error: "Unknown agency" });
+        const obj = await fetchGtfsRtFeed(agency, "trip_url");
+        res.json(obj);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
 });
 app.get("/api/overview", (req, res) => {
     res.render("overview");
 });
-
+app.get("/api/trips/:agencyId/:tripId", async (req, res) => {
+    try {
+        const { agencyId, tripId } = req.params;
+        const agency = agencies[agencyId];
+        if (!agency) {
+            return res.status(404).json({ error: `Unknown agencyId: ${agencyId}` });
+        }
+        const obj = await fetchGtfsRtFeed(agency, "trip_url");
+        const entity = (obj.entity || []).find(e => e.tripUpdate?.trip?.tripId === tripId);
+        if (!entity) {
+            return res.status(404).json({
+                error: `Trip ${tripId} not found for agencyId: ${agencyId}`
+            });
+        }
+        res.json(entity);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message || "Failed to fetch trip updates" });
+    }
+});
+app.get("/api/vehicles/")
 app.get("/about", (req, res) => {
     res.render("about");
 });
@@ -108,7 +126,7 @@ if (!process.env.VERCEL && !process.env.NOW_REGION) {
     const PORT = process.env.PORT || 8088;
     app.listen(PORT, () => {
         console.log(`Server running: http://localhost:${PORT}`);
-        console.log(`📘 Auto-generated API docs will appear at /api-docs`);
+        console.log(`📘 Auto-generated API docs will appear at http://localhost:${PORT}/api-docs`);
     });
 }
 
