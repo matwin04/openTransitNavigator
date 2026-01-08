@@ -14,10 +14,14 @@ export function feedToVehicleGeoJSON(feed) {
             properties: {
                 agencyId: null, // you’ll set this in the route
                 id: v.vehicle?.id ?? null,
-                trip: v.trip ?? null,
-                position: v.position ?? null,
-                timestamp: v.timestamp ?? null,
-                vehicle: v.vehicle ?? null
+
+                //TripData
+                tripId: v.trip?.tripId ?? null,
+                startTime: v.trip?.startTime ?? null,
+                endTime: v.trip?.startDate ?? null,
+                routeId: v.trip?.routeId ?? null,
+                directionId: v.trip?.directionId ?? null,
+                scheduleRelationship: v.trip?.scheduleRelationship ?? null,
             },
         })),
     };

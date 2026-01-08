@@ -21,20 +21,15 @@ function showTrainPopup(e) {
   const f = e.features[0];
   const p = f.properties;
   
-  const route = p.trip?.routeId ?? "Unknown";
-  const trip = p.trip?.tripId ?? "Unknown";
-  const speed = p.position?.speed
-  ? Math.round(p.position.speed * 2.23694) + " mph"
-  : "N/A";
+
   
   new maplibregl.Popup()
   .setLngLat(f.geometry.coordinates)
   .setHTML(`
-      <strong>${p.agencyId}</strong><br>
-      <strong>Vehicle:</strong> ${p.id}<br>
-      <strong>Route:</strong> ${route}<br>
-      <strong>Trip:</strong> ${trip}<br>
-      <strong>Speed:</strong> ${speed}
+      <b>${p.agencyId}</b><br>
+      <b>Vehicle:</b> ${p.id}<br>
+      <b>Route:</b> ${p.routeId}<br>
+      <b>Trip:</b> ${p.tripId}<br>
     `)
   .addTo(map);
 }
@@ -90,10 +85,10 @@ map.on("load", () => {
         type: "circle",
         source: "lametro_rail",
         paint: {
-            "circle-radius": 3.5,
+            "circle-radius": 5,
             "circle-color": [
                 "match",
-                ["get", "trip.routeId"],
+                ["get", "routeId"],
                 "801", larouteColors["801"],
                 "802", larouteColors["802"],
                 "803", larouteColors["803"],

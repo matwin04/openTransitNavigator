@@ -12,5 +12,6 @@
     <orderEntry type="library" name="font-awesome" level="application" />
     <orderEntry type="library" name="font-awesome" level="application" />
     <orderEntry type="library" name="bulma" level="application" />
+    <orderEntry type="library" name="leaflet-providers" level="application" />
   </component>
 </module>
