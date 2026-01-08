@@ -63,7 +63,10 @@ map.on("load", () => {
         type: "circle",
         source: "metrolink",
         paint: {
-            "circle-radius":5,
+            "circle-radius": 6,
+            "circle-stroke-width": 1,
+            "circle-stroke-color": "#fff",
+
             "circle-color": [
                 "match",
                 ["get", "routeId"],
@@ -89,7 +92,9 @@ map.on("load", () => {
         type: "circle",
         source: "lametro_rail",
         paint: {
-            "circle-radius": 5,
+            "circle-radius": 6,
+            "circle-stroke-width": 1,
+            "circle-stroke-color": "#fff",
             "circle-color": [
                 "match",
                 ["get", "routeId"],
