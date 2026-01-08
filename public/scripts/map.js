@@ -17,6 +17,27 @@ const map = new maplibregl.Map({
     center: [-118.25, 34.05],
     zoom: 9
 });
+function showTrainPopup(e) {
+  const f = e.features[0];
+  const p = f.properties;
+  
+  const route = p.trip?.routeId ?? "Unknown";
+  const trip = p.trip?.tripId ?? "Unknown";
+  const speed = p.position?.speed
+  ? Math.round(p.position.speed * 2.23694) + " mph"
+  : "N/A";
+  
+  new maplibregl.Popup()
+  .setLngLat(f.geometry.coordinates)
+  .setHTML(`
+      <strong>${p.agencyId}</strong><br>
+      <strong>Vehicle:</strong> ${p.id}<br>
+      <strong>Route:</strong> ${route}<br>
+      <strong>Trip:</strong> ${trip}<br>
+      <strong>Speed:</strong> ${speed}
+    `)
+  .addTo(map);
+}
 map.addControl(new maplibregl.NavigationControl());
 map.on("load", () => {
     //Add Trains
@@ -72,7 +93,7 @@ map.on("load", () => {
             "circle-radius": 3.5,
             "circle-color": [
                 "match",
-                ["get", "routeId"],
+                ["get", "trip.routeId"],
                 "801", larouteColors["801"],
                 "802", larouteColors["802"],
                 "803", larouteColors["803"],
@@ -103,38 +124,8 @@ map.on("load", () => {
             .setHTML(`<strong>${p.name}</strong> (${p.code})<br>${p.city}, ${p.state}`)
             .addTo(map);
     });
-    map.on("click", "metrolink-layer", (e) => {
-        const f = e.features[0];
-        const p = f.properties;
-        new maplibregl.Popup()
-            .setLngLat(f.geometry.coordinates)
-            .setHTML(
-                `
-                <div class="popup">
-                  <h2>${p.id}</h2>
-                  <b>${p.agencyId}-${p.routeId || " "}</b>
-                  <br>
-                    Speed: ${p.speed ? Math.round(p.speed) + " mph" : "N/A"}
-                </div>
-              
-            `
-            )
-            .addTo(map);
-    });
-    map.on("click", "lametro_rail-layer", (e) => {
-        const f = e.features[0];
-        const p = f.properties;
-        new maplibregl.Popup()
-            .setLngLat(f.geometry.coordinates)
-            .setHTML(
-                `
-              <strong>${p.routeId || " "}<a href="/trains/${p.trainNum}">${p.trainNum}</a></strong><br/>
-              <strong>Next Stop: </strong>${p.eventName || ""}<br/>
-              Speed: ${p.speed ? Math.round(p.speed) + " mph" : "N/A"}
-            `
-            )
-            .addTo(map);
-    });
+    map.on("click", "metrolink-layer", showTrainPopup);
+    map.on("click", "lametro_rail-layer", showTrainPopup);
     const REFRESH_MS = 10000;
 
     setInterval(() => {
