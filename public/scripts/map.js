@@ -50,6 +50,10 @@ map.on("load", () => {
         type: "geojson",
         data: "/api/bikes/stations"
     });
+    map.addSource("nctd",{
+        type: "geojson",
+        data: "/api/vehicles/nctd.geojson"
+    });
     map.addSource("ws", {
         type: "geojson",
         data: "https://api.metro.net/LACMTA_Rail/vehicle_positions?format=geojson"
@@ -87,6 +91,16 @@ map.on("load", () => {
             "circle-color":"#ff6000",
         }
     });
+    map.addLayer({
+        id: "nctd-layer",
+        type: "circle",
+        source: "nctd",
+        paint: {
+            "circle-radius":6,
+            "circle-color":"#ff6000",
+
+        }
+    })
     map.addLayer({
         id: "lametro_rail-layer",
         type: "circle",
@@ -139,13 +153,14 @@ map.on("load", () => {
     });
     map.on("click", "metrolink-layer", showTrainPopup);
     map.on("click", "lametro_rail-layer", showTrainPopup);
+    map.on("click", "nctd-layer", showTrainPopup);
     const REFRESH_MS = 10000;
 
     setInterval(() => {
         if (!map.isStyleLoaded()) return;
 
         map.getSource("metrolink")?.setData("/api/vehicles/metrolink");
-        map.getSource("octa")?.setData("/api/vehicles/octa");
+        map.getSource("nctd")?.setData("/api/vehicles/nctd");
         map.getSource("lametro_rail")?.setData("/api/vehicles/lametro_rail");
         console.log(REFRESH_MS);
     }, REFRESH_MS);

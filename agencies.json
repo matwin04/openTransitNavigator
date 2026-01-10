@@ -13,5 +13,10 @@
     "agencyId": "lametro_rail",
     "vehicle_url": "https://transit.land/api/v2/rest/feeds/f-metro~losangeles~rail~rt/download_latest_rt/vehicle_positions.pb?apikey=WOo9vL8ECMWN76EcKjsNGfo8YgNZ7c2u",
     "trip_url": "https://transit.land/api/v2/rest/feeds/f-metro~losangeles~rail~rt/download_latest_rt/trip_updates.pb?apikey=WOo9vL8ECMWN76EcKjsNGfo8YgNZ7c2u"
+  },
+  "nctd": {
+    "agencyId": "nctd",
+    "vehicle_url": "https://transit.land/api/v2/rest/feeds/f-northcountrytransitdistrict~rt/download_latest_rt/vehicle_positions.pb?apikey=WOo9vL8ECMWN76EcKjsNGfo8YgNZ7c2u",
+    "trip_url": "https://transit.land/api/v2/rest/feeds/f-northcountrytransitdistrict~rt/download_latest_rt/trip_updates.pb?apikey=WOo9vL8ECMWN76EcKjsNGfo8YgNZ7c2u"
   }
 }
