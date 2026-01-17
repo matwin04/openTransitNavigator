@@ -8,6 +8,7 @@
 <body>
 {{> navbar}}
 <table>
+    {{stop_id}}
     <thead>
         <tr>
             <th>Station</th>
@@ -17,15 +18,13 @@
         </tr>
     </thead>
     <tbody>
-    {{#each stations}}
+    {{#each departures}}
     <tr>
         <td>
             <a href="/stations/{{code}}/">{{name}}</a>
         </td>
-        <td>{{code}}</td>
-        <td>{{tz}}</td>
-        <td>{{city}}</td>
-        <td>{{state}}</td>
+        <td>{{stop_headsign}}</td>
+        <td>{{departure_time}}</td>
     </tr>
     {{/each}}
     </tbody>

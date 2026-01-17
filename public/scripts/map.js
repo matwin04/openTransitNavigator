@@ -29,7 +29,7 @@ function showTrainPopup(e) {
       <b>${p.agencyId}</b><br>
       <b>Vehicle:</b> ${p.id}<br>
       <b>Route:</b> ${p.routeId}<br>
-      <b>Trip:</b> <a href="/api/trips/${p.agencyId}/${p.tripId}">${p.tripId}</a><br>
+      <b>Trip:</b> <a href="/api/trips/${p.tripId}">${p.tripId}</a><br>
     `)
   .addTo(map);
 }
@@ -46,13 +46,14 @@ map.on("load", () => {
         data: "/api/vehicles/octa.geojson"
     });
     //Add Stations
+
     map.addSource("stations", {
         type: "geojson",
         data: "/api/bikes/stations"
     });
-    map.addSource("nctd",{
+    map.addSource("routes",{
         type: "geojson",
-        data: "/api/vehicles/nctd.geojson"
+        data: "/api/gtfs/shapes"
     });
     map.addSource("ws", {
         type: "geojson",
@@ -62,6 +63,16 @@ map.on("load", () => {
         type: "geojson",
         data: "/api/vehicles/lametro_rail.geojson"
     })
+    map.addLayer({
+        id: "routes-layer",
+        type: "line",
+        source: "routes",
+        paint: {
+            "line-width":2,
+            "line-color": ["get","route_color"]
+
+        }
+    });
     map.addLayer({
         id: "metrolink-layer",
         type: "circle",
@@ -92,9 +103,9 @@ map.on("load", () => {
         }
     });
     map.addLayer({
-        id: "nctd-layer",
-        type: "circle",
-        source: "nctd",
+        id: "shapes-layer",
+        type: "line",
+        source: "shapes",
         paint: {
             "circle-radius":6,
             "circle-color":"#ff6000",
