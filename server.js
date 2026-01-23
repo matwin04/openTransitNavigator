@@ -10,13 +10,13 @@ import fs from "node:fs/promises";
 import GtfsRealtimeBindings from "gtfs-realtime-bindings";
 dotenv.config();
 import {
-    getAgencies,
-    getRoutes,
+    getAgencies, getCalendars, getFareAttributes, getFareMedia, getFareProducts, getFareRules,
+    getRoutes, getServiceAlerts,
     getShapesAsGeoJSON,
     getStops,
     getStopsAsGeoJSON,
     getStoptimes,
-    getStopTimeUpdates, getTrips,
+    getStopTimeUpdates, getTimetables, getTrips, getTripUpdates, getVehiclePositions,
     importGtfs, updateGtfsRealtime
 } from 'gtfs';
 import {agency} from "gtfs/models";
@@ -104,7 +104,54 @@ app.get("/api/departures", (req, res) => {
 
     res.json(stoptimes);
 });
+app.get("/api/calendar", (req, res) => {
+    const calendars = getCalendars();
+    res.json(calendars);
+});
+app.get("/api/fares",(req, res) => {
+    const {agency_id} = req.query;
+    const fares = getFareAttributes({
+        ...(agency && { agency_id })
+    });
+    res.json(fares);
+});
+app.get("/api/fare/products", (req, res) => {
+    const fare_products = getFareProducts();
+    res.json(fare_products);
+});
+app.get("/api/fare/rules", (req, res) => {
+    const fare_rules = getFareRules();
+    res.json(fare_rules);
+});
+app.get("/api/fare/media", (req, res) => {
+    const fare_media = getFareMedia();
+    res.json(fare_media);
+});
+app.get("/api/timetables", (req, res) => {
+    const timetables = getTimetables();
+    res.json(timetables);
+});
 
+app.get("/api/realtime/alerts",async (req, res) => {
+    await updateGtfsRealtime(GTFSCFG)
+    const service_alerts = getServiceAlerts();
+    res.json(service_alerts);
+});
+app.get("/api/realtime/trip_updates", async (req, res) => {
+    await updateGtfsRealtime(GTFSCFG)
+    const trip_updates = getTripUpdates();
+    res.json(trip_updates);
+});
+app.get("/api/realtime/stop_time_updates", async (req, res) => {
+    await updateGtfsRealtime(GTFSCFG)
+    const stop_time_updates = getStopTimeUpdates();
+    res.json(stop_time_updates);
+});
+app.get("/api/realtime/vehicle_positions", async (req, res) => {
+    await updateGtfsRealtime(GTFSCFG)
+    const vehicle_positions = getVehiclePositions();
+    res.json(vehicle_positions);
+});
 app.get("/about", (req, res) => {
     res.render("about");
 });
