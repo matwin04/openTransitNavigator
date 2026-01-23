@@ -2,7 +2,6 @@
   "agencies": [
     {
       "url": "https://gitlab.com/LACMTA/gtfs_rail/raw/master/gtfs_rail.zip",
-      "prefix": "LAMETRO",
       "realtimeVehiclePositions": {
         "url":"https://api.goswift.ly/real-time/lametro-rail/gtfs-rt-vehicle-positions",
         "headers": {
@@ -18,7 +17,6 @@
     },
     {
       "url": "https://metrolinktrains.com/globalassets/about/gtfs/gtfs.zip",
-      "prefix": "SCAX",
       "realtimeAlerts": {
         "url": "https://metrolink-gtfsrt.gbsdigital.us/feed/gtfsrt-alerts",
         "headers": {
