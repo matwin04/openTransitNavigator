@@ -88,6 +88,13 @@ app.get("/api/stops",(req, res) => {
         : getStops();
     res.json(stops);
 });
+app.get("/api/stops.geojson", async (req, res) => {
+    const {stop_id} = req.query;
+    const stops = stop_id
+        ? getStopsAsGeoJSON(stop_id)
+        : getStopsAsGeoJSON();
+    res.json(stops);
+});
 app.get("/api/trips", (req, res) => {
     const {trip_id} = req.query;
     const trips = trip_id
@@ -152,6 +159,7 @@ app.get("/api/realtime/vehicle_positions", async (req, res) => {
     const vehicle_positions = getVehiclePositions();
     res.json(vehicle_positions);
 });
+
 app.get("/about", (req, res) => {
     res.render("about");
 });
