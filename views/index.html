@@ -13,9 +13,7 @@
     </head>
     <body>
         {{> navbar }}
-        <h1 class="title">OpenTransitNavigator</h1>
-        <p class="subtitle">Making transit easier!</p>
-        <div id="map"></div>
+
         <div id="info">
             <h1 class="title is-3">Agencies</h1>
         <table>
@@ -26,7 +24,7 @@
             {{#each agencies}}
             <tr>
                 <th>
-                    <a href="/agencies/{{agency_id}}">{{agency_id}}</a></th>
+                    <a href="/api/agencies/{{agency_id}}">{{agency_id}}</a></th>
                 <td>{{agency_name}}</td>
                 <td>{{agency_url}}</td>
             </tr>
@@ -35,6 +33,5 @@
         </table>
         </div>
         <script src="/public/scripts/map.js"></script>
-
     </body>
 </html>

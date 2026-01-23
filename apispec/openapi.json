@@ -16,7 +16,95 @@
     }
   ],
   "paths": {
-    "/api/stops/:stop_id": {
+    "/api/stops": {
+      "get": {
+        "description": "New endpoint",
+        "responses": {
+          "200": {
+            "description": "New response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "": ""
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/trips/": {
+      "get": {
+        "description": "New endpoint",
+        "responses": {
+          "200": {
+            "description": "New response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "": ""
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "New endpoint",
+        "responses": {
+          "200": {
+            "description": "New response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "": ""
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/departures": {
+      "get": {
+        "summary": "Get stop times (departures)",
+        "description": "Returns a list of stop times filtered by stop_id, trip_id, or both.",
+        "parameters": [
+          {
+            "name": "stop_id",
+            "in": "query",
+            "description": "Filter by a specific stop",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "trip_id",
+            "in": "query",
+            "description": "Filter by a specific trip",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of stop times",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/StopTime" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stops/{{stop_id}}": {
       "get": {
         "description": "New endpoint",
         "responses": {

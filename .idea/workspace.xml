@@ -5,17 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="55437ce9-b232-49bf-9c37-106ebc09d8c3" name="Changes" comment="OTN Favicon Live">
-      <change afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/views/info/agency.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agencies.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/apispec/openapi.json" beforeDir="false" afterPath="$PROJECT_DIR$/apispec/openapi.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apispec/w.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/apispec/w.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apispec/w.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bikes.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/converter.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/public/scripts/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/scripts/map.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/styles/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/styles/main.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/stations.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/departures.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/overview.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/overview.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/partials/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/partials/navbar.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,9 +27,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="JavaScript File" />
         <option value="OpenAPI" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -73,7 +74,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;24.10.0&quot;,
     &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;24.10.4&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/frostie/Projects/openTransitNavigator&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/frostie/Projects/openTransitNavigator/public&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -94,32 +95,17 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public" />
       <recent name="$PROJECT_DIR$/public/images" />
       <recent name="$PROJECT_DIR$/pages/public" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/public" />
       <recent name="$PROJECT_DIR$/apispec" />
       <recent name="$PROJECT_DIR$/public/styles" />
       <recent name="$PROJECT_DIR$/views/partials" />
-      <recent name="$PROJECT_DIR$/pages/public/images" />
-      <recent name="$PROJECT_DIR$/pages/.vitepress" />
     </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="configurationStatuses">
-      <map>
-        <entry key="HttpClient.HttpRequestRunConfigurationType">
-          <value>
-            <map>
-              <entry key="All in generated-requests" value="STOPPED" />
-              <entry key="generated-requests | #4" value="STOPPED" />
-              <entry key="generated-requests | #5" value="STOPPED" />
-              <entry key="generated-requests | #6" value="STOPPED" />
-            </map>
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
   <component name="RunManager" selected="npm.start">
     <configuration name="All in generated-requests" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$APPLICATION_CONFIG_DIR$/scratches/generated-requests.http">
@@ -200,6 +186,9 @@
       <workItem from="1768629491794" duration="157000" />
       <workItem from="1768630529192" duration="271000" />
       <workItem from="1768675532533" duration="1159000" />
+      <workItem from="1768682695004" duration="1441000" />
+      <workItem from="1769115851885" duration="2501000" />
+      <workItem from="1769124228783" duration="2942000" />
     </task>
     <task id="LOCAL-00001" summary="Somewhat working now">
       <option name="closed" value="true" />

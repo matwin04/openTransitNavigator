@@ -35,8 +35,6 @@ function showTrainPopup(e) {
 }
 map.addControl(new maplibregl.NavigationControl());
 map.on("load", () => {
-    //Add Trains
-
     map.addSource('metrolink', {
         type: "geojson",
         data: "/api/vehicles/metrolink.geojson"

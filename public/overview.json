@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "name": "Trips",
+    "url": "/api/trips",
+    "description": "Get info for a specific trip"
+  },
+  {
+    "id": 2,
+    "name": "Agencies",
+    "url": "/api/agencies"
+  },
+  {
+    "id": 3,
+    "name": "Routes",
+    "url": "/api/routes"
+  },
+  {
+    "id": 4,
+    "name": "stops",
+    "url": "/api/stops"
+  },
+  {
+    "id": 5,
+    "name": "stoptimes",
+    "url": "/api/stoptimes"
+  }
+]

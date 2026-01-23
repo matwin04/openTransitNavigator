@@ -3,12 +3,11 @@ import path from "path";
 import dotenv from "dotenv";
 import { engine } from "express-handlebars";
 import { fileURLToPath } from "url";
-import * as bikes from "./bikes.js";
+
 import fetch from "node-fetch";
 import swaggerUi from "swagger-ui-express";
 import fs from "node:fs/promises";
 import GtfsRealtimeBindings from "gtfs-realtime-bindings";
-import {feedToVehicleGeoJSON} from "./converter.js";
 dotenv.config();
 import {
     getAgencies,
@@ -17,7 +16,7 @@ import {
     getStops,
     getStopsAsGeoJSON,
     getStoptimes,
-    getStopTimeUpdates,
+    getStopTimeUpdates, getTrips,
     importGtfs, updateGtfsRealtime
 } from 'gtfs';
 import {agency} from "gtfs/models";
@@ -33,31 +32,17 @@ const PARTIALS_DIR = path.join(VIEWS_DIR, "partials");
 const openapi = JSON.parse(
     await fs.readFile(new URL("./apispec/openapi.json", import.meta.url), "utf8")
 );
-const agencies = JSON.parse(
-    await fs.readFile(new URL("./agencies.json", import.meta.url), "utf8")
-);
 const GTFSCFG = JSON.parse(
     await fs.readFile(new URL('./config.json',import.meta.url), "utf8")
 );
+const overview = JSON.parse(
+    await fs.readFile(new URL("./overview.json",import.meta.url), "utf8")
+);
+console.log(overview)
 await importGtfs(GTFSCFG);
 
 await updateGtfsRealtime(GTFSCFG)
-async function fetchGtfsRtFeed(agency, urlField) {
-    if (!agency?.[urlField]) {
-        throw new Error(`Agency does not have ${urlField}`);
-    }
-    const headers = {};
-    if (agency.api_key) headers["x-api-key"] = agency.api_key;
-    const response = await fetch(agency[urlField], { headers });
-    if (!response.ok) {
-        throw new Error(`Upstream GTFS-RT error: ${response.status}`);
-    }
-    const buffer = await response.arrayBuffer();
-    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-        new Uint8Array(buffer)
-    );
-    return GtfsRealtimeBindings.transit_realtime.FeedMessage.toObject(feed);
-}
+
 app.engine("html", engine({ extname: ".html", defaultLayout: false, partialsDir: PARTIALS_DIR }));
 app.set("view engine", "html");
 app.set("views", VIEWS_DIR);
@@ -73,84 +58,53 @@ app.get("/", async (req, res) => {
         agencies: agencies,
     });
 });
-app.get("/agencies/:agency_id", async (req, res) => {
+
+app.get("/api/overview", (req, res) => {
+    res.render("overview",overview);
+});
+app.get("/api/agencies/:agency_id", (req, res) => {
     const agency_id = req.params.agency_id;
     const agency = getAgencies({agency_id});
-    const routes = getRoutes({agency_id});
-    res.render("info/agency", {
-        agency: agency,
-        routes: routes,
-    })
+    res.json(agency);
 });
-
-app.get("/api/vehicles/:agencyId.geojson", async (req, res) => {
-    try {
-        const agencyId = req.params.agencyId;
-        const agency = agencies[agencyId];
-        if (!agency) return res.status(404).json({ error: "Unknown agency" });
-        const obj = await fetchGtfsRtFeed(agency, "vehicle_url");
-        // If your converter expects decoded feed instead of object:
-        const geojson = feedToVehicleGeoJSON(
-            GtfsRealtimeBindings.transit_realtime.FeedMessage.fromObject(obj)
-        );
-
-        for (const f of geojson.features) f.properties.agencyId = agencyId;
-        res.json(geojson);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: err.message });
-    }
+app.get("/api/agencies", async (req, res) => {
+    const { agency_id } = req.query;
+    const agencies = agency_id
+        ? getAgencies({agency_id})
+        : getAgencies();
+    res.json(agencies);
 });
-app.get("/api/vehicles/:agencyId", async (req, res) => {
-    try {
-        const agency = agencies[req.params.agencyId];
-        if (!agency) return res.status(404).json({ error: "Unknown agency" });
-
-        const obj = await fetchGtfsRtFeed(agency, "vehicle_url");
-        res.json(obj);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: err.message });
-    }
+app.get("/api/routes", async (req, res) => {
+    const {route_id } = req.query;
+    const routes = route_id
+        ? getRoutes({route_id})
+        : getRoutes();
+    res.json(routes);
 });
-app.get("/api/overview", (req, res) => {
-    res.render("overview");
+app.get("/api/stops",(req, res) => {
+    const {stop_id} = req.query;
+    const stops = stop_id
+        ? getStops({stop_id})
+        : getStops();
+    res.json(stops);
 });
-app.get("/api/trips/:trip_id", (req, res) => {
-    const trip_id = req.params.trip_id;
-    const stoptimes = getStoptimes({trip_id});
-    res.json(stoptimes);
+app.get("/api/trips", (req, res) => {
+    const {trip_id} = req.query;
+    const trips = trip_id
+        ? getTrips({trip_id})
+        : getTrips();
+    res.json(trips);
 });
-app.get("/api/trips/rt/:trip_id", (req, res) => {
-    const trip_id = req.params.trip_id;
-    const stoptimes = getStopTimeUpdates();
-    res.json(stoptimes);
-});
-app.get("/api/stops/:stop_id", (req, res) => {
-    const stop_id = req.params.stop_id;
-    const departureBoard = getStoptimes({stop_id});
-    res.json(departureBoard);
-});
-app.get("/stops/:stop_id", (req, res) => {
-    const stop_id = req.params.stop_id;
-    const departureBoard = getStoptimes({stop_id});
-    res.render("departures", {
-        stop_id: stop_id,
-        departures: departureBoard,
+app.get("/api/departures", (req, res) => {
+    const { stop_id, trip_id } = req.query;
+    const stoptimes = getStoptimes({
+        ...(stop_id && { stop_id }),
+        ...(trip_id && { trip_id })
     });
-})
-app.get("/api/stops/geojson", (req, res) => {
-    const geojson = getStopsAsGeoJSON();
-    res.json(geojson);
+
+    res.json(stoptimes);
 });
-app.get("/api/gtfs/shapes", (req, res) => {
-    const shapesGeojson = getShapesAsGeoJSON();
-    res.json(shapesGeojson)
-});
-app.get("/api/gtfs/stops", (req, res) => {
-    const stopsGeojson = getStopsAsGeoJSON();
-    res.json(stopsGeojson);
-});
+
 app.get("/about", (req, res) => {
     res.render("about");
 });
