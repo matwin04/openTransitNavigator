@@ -6,12 +6,7 @@
 
         <link rel="stylesheet" href="/public/styles/main.css" />
         <link href="/public/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-              integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-              crossorigin=""/>
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-                crossorigin=""></script>
+
         <!-- MapLibre GL JS CSS -->
         <link href="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.css" rel="stylesheet" />
 
@@ -20,25 +15,19 @@
     <body>
         {{> navbar }}
         <div id="map"></div>
-
         <div id="info">
-            <h1 class="title is-3">Agencies</h1>
-        <table>
-            <thead>
-
-            </thead>
-            <tbody>
-            {{#each agencies}}
-            <tr>
-                <th>
-                    <a href="/api/agencies/{{agency_id}}">{{agency_id}}</a></th>
-                <td>{{agency_name}}</td>
-                <td>{{agency_url}}</td>
-            </tr>
-            {{/each}}
-            </tbody>
-        </table>
+            <div id="station"></div>
+            <button onclick="loadAgencies()">Agencies</button>
+            <button onclick="loadStations()">Stations</button>
+            <button onclick="loadTrips()">Trips</button>
+            <button onclick="loadVehicles()">Vehicles</button>
+            <button onclick="loadRoutes()">Routes</button>
+            <table>
+                <thead></thead>
+                <tbody id="table-body"></tbody>
+            </table>
         </div>
         <script src="/public/scripts/map.js"></script>
+        <script src="/public/scripts/script.js"></script>
     </body>
 </html>

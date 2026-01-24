@@ -1,6 +1,9 @@
 {
   "agencies": [
     {
+      "url": "https://www.sdmts.com/google_transit_files/google_transit.zip"
+    },
+    {
       "url": "https://gitlab.com/LACMTA/gtfs_rail/raw/master/gtfs_rail.zip",
       "realtimeVehiclePositions": {
         "url":"https://api.goswift.ly/real-time/lametro-rail/gtfs-rt-vehicle-positions",

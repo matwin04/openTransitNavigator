@@ -11,7 +11,7 @@ import GtfsRealtimeBindings from "gtfs-realtime-bindings";
 dotenv.config();
 import {
     getAgencies, getCalendars, getFareAttributes, getFareMedia, getFareProducts, getFareRules,
-    getRoutes, getServiceAlerts,
+    getRoutes, getServiceAlerts, getShapes,
     getShapesAsGeoJSON,
     getStops,
     getStopsAsGeoJSON,
@@ -19,7 +19,7 @@ import {
     getStopTimeUpdates, getTimetables, getTrips, getTripUpdates, getVehiclePositions,
     importGtfs, updateGtfsRealtime
 } from 'gtfs';
-import {agency} from "gtfs/models";
+import {agency, trips} from "gtfs/models";
 
 const app = express();
 
@@ -88,6 +88,7 @@ app.get("/api/stops",(req, res) => {
         : getStops();
     res.json(stops);
 });
+
 app.get("/api/stops.geojson", async (req, res) => {
     const {stop_id} = req.query;
     const stops = stop_id
@@ -155,9 +156,31 @@ app.get("/api/realtime/stop_time_updates", async (req, res) => {
     res.json(stop_time_updates);
 });
 app.get("/api/realtime/vehicle_positions", async (req, res) => {
-    await updateGtfsRealtime(GTFSCFG)
-    const vehicle_positions = getVehiclePositions();
-    res.json(vehicle_positions);
+    try {
+        await updateGtfsRealtime(GTFSCFG);
+        const vehicle_positions = getVehiclePositions();
+        const enriched = vehicle_positions.map(vehicle => {
+            const trip = getTrips({ trip_id: vehicle.trip_id })[0];
+            if (trip) {
+                const route = getRoutes({ route_id: trip.route_id })[0];
+                return {
+                    ...vehicle,
+                    route_id: trip.route_id,
+                    route_color: route?.route_color ? `#${route.route_color}` : null,
+                    route_text_color: route?.route_text_color ? `#${route.route_text_color}` : null
+                };
+            }
+            return vehicle;
+        });
+        res.json(enriched);
+    } catch (error) {
+        console.error("Realtime enrichment error:", error);
+        res.status(500).json({ error: "Failed to fetch enriched vehicle positions" });
+    }
+});
+app.get("/api/shapes", (req, res) => {
+    const shapes = getShapesAsGeoJSON();
+    res.json(shapes);
 });
 
 app.get("/about", (req, res) => {
