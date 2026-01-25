@@ -9,13 +9,12 @@ html {
 .container {
     display: grid;
     grid-template-columns: 50% 50%;
-
 }
 .mdi {
     font-size: 20px;
     text-align: center;
     vertical-align: middle;
-    color: brown;
+
 }
 .container div {
     text-align: left;
@@ -32,11 +31,17 @@ html {
     font-size: 14px;
 }
 table {
-    border: 1px solid black;
     width: 100%;
     text-align: center;
     border-collapse: collapse;
 }
 .status-live {
     color: green;
+}
+th,
+td {
+    border-bottom: 1px solid #ddd;
+}
+#trip-details {
+    grid-column: 1 / span 2;
 }

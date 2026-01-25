@@ -8,6 +8,7 @@ async function loadRouteColors() {
     );
 }
 
+
 const map = new maplibregl.Map({
     container: "map",
     style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -57,13 +58,7 @@ async function getStationName(stop_id) {
 
 async function getTripBoard(e) {
     const { trip_id } = e.features[0].properties;
-    const tableBody = document.getElementById("train-table-body");
-    const time_options = {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true,
-    }
+    const tableBody = document.getElementById('train-table-body');
     try {
         const [staticRes, realtimeRes] = await Promise.all([
             fetch(`/api/departures?trip_id=${trip_id}`),
@@ -71,39 +66,47 @@ async function getTripBoard(e) {
         ]);
         const staticData = await staticRes.json();
         const realtimeData = await realtimeRes.json();
-        const now = Date.now();
-        tableBody.innerHTML = "";
 
+        // Current time in seconds for comparison with GTFS-rt timestamps
+
+        tableBody.innerHTML = '';
+        const formatTime = (timestamp) => {
+            if (!timestamp) return 'N/A';
+            // Ensure we are working with milliseconds
+            const date = new Date(timestamp * 1000);
+            return date.toLocaleTimeString('en-US', {
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+            });
+        };
         for (const st of staticData) {
             const rt = realtimeData.find(update => update.stop_id === st.stop_id);
+            const now = Math.floor(Date.now() / 1000);
+            const arrivalTime = rt?.arrival_timestamp || st.arrival_timestamp;
+            // Use realtime arrival if available, otherwise fallback to static
+            const rt_arrival = rt?.arrival_timestamp;
+            const st_arrival = st.arrival_timestamp;
+            const nowInSeconds = Math.floor(Date.now() / 1000);
+            if (arrivalTime < (nowInSeconds - 43200)) {
+                continue; // Skip this row if it's from > 12 hours ago
+            }
 
-            const dateObj = new Date(rt?.arrival_timestamp * 1000);
-            const name = await getStationName(stop_id);
-            console.log(`NAME:${name.stop_name}`);
-            const formated_timestamp = dateObj.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true,
-            });
+            const name = await getStationName(st.stop_id);
+
             const row = `
-                <tr>
+                <tr class="${rt ? 'status-live' : 'status-scheduled'}">
                     <td>${name}</td>
-                    <td>${st.stop_id}</td>
-                    <td>${st.arrival_time || 'N/A'}</td> 
-                    <td>${formated_timestamp || 'No Update'}</td>
-                    <td class="${rt ? 'status-live' : 'status-scheduled'}">
-                        ${rt ? 'Live' : 'Scheduled'}
-                    </td>
-                </tr>
-            `;
-            tableBody.insertAdjacentHTML("beforeend", row);
-        }
+                    <td>${formatTime(arrivalTime)}</td>
+                    <td>${rt ? 'status-live' : 'status-scheduled'}</td>
+                </tr>`;
 
+            tableBody.insertAdjacentHTML('beforeend', row);
+        }
     } catch (err) {
-        console.error("Error loading trip board:", err);
+        console.error('Error loading trip board:', err);
     }
 }
+
+
 function showStopPopup(e) {
     const f = e.features[0];
     const p = f.properties;
