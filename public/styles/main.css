@@ -1,5 +1,6 @@
 @import url("https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css");
-@import url("https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"); #map {
+
+#map {
     height: 700px;
     grid-row-start: span;
 }
