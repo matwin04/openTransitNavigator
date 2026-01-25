@@ -9,7 +9,7 @@ html {
 .container {
     display: grid;
     grid-template-columns: 50% 50%;
-    box-shadow: 1px black;
+
 }
 .mdi {
     font-size: 20px;
@@ -18,7 +18,6 @@ html {
     color: brown;
 }
 .container div {
-    margin: 10px;
     text-align: left;
 }
 .stop_name {

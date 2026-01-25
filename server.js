@@ -161,10 +161,8 @@ app.get("/api/realtime/vehicle_positions", async (req, res) => {
         const enriched = vehicle_positions.map(vehicle => {
             const trip = getTrips({ trip_id: vehicle.trip_id })[0];
             if (trip) {
-                console.log(trip.trip_id);
                 const route = getRoutes({ route_id: trip.route_id })[0];
                 const stoptimes = getStoptimes({trip_id: trip.trip_id})[0];
-                console.log(stoptimes.stop_headsign);
                 return {
                     ...vehicle,
                     headsign: stoptimes.stop_headsign,
