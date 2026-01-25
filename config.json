@@ -1,5 +1,4 @@
 {
-  "sqlitePath": "./gtfs.db",
   "agencies": [
 
     {

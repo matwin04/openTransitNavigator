@@ -105,10 +105,11 @@ app.get("/api/trips", (req, res) => {
     res.json(trips);
 });
 app.get("/api/departures", (req, res) => {
-    const { stop_id, trip_id } = req.query;
+    const { stop_id, trip_id, date } = req.query;
     const stoptimes = getStoptimes({
         ...(stop_id && { stop_id }),
-        ...(trip_id && { trip_id })
+        ...(trip_id && { trip_id }),
+        ...(date && {date})
     });
     res.json(stoptimes);
 });
