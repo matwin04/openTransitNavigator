@@ -1,0 +1,14 @@
+#container {
+    display: grid;
+    grid-template-columns: 25% 75%;
+}
+#container div {
+    border: 1px solidblack;
+}
+#map {
+    height: 500px;
+    width: 100%;
+}
+#agency {
+    color: green;
+}

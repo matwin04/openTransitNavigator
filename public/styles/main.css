@@ -1,23 +1,26 @@
 @import url("https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css");
-#map {
-    height: 500px;
-    grid-column: 1 / span 2;
+@import url("https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"); #map {
+    height: 700px;
+    grid-row-start: span;
 }
 html {
     font-family: sans-serif;
 }
 .container {
     display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 70% 30%;
+}
+#sidebar {
+    justify-content: stretch;
 }
 .mdi {
     font-size: 20px;
     text-align: center;
     vertical-align: middle;
-
 }
 .container div {
     text-align: left;
+    margin-top: 10px;
 }
 .stop_name {
     font-size: 16px;
@@ -41,7 +44,4 @@ table {
 th,
 td {
     border-bottom: 1px solid #ddd;
-}
-#trip-details {
-    grid-column: 1 / span 2;
 }

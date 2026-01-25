@@ -13,22 +13,22 @@
         <script src="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.js"></script>
     </head>
     <body>
-        <div class="container">
+        <div class="container is-">
             <div id="map" class="cell"></div>
-
-            <div class="cell" id="station-info">
-                <div id="station_name">Station Name</div>
-                <div id="station_id">ID</div>
-                <a href="/api/trips">/station_info</a>
-            </div>
-            <div class="cell" id="train-info">
-                <div id="headsign">Click a train to view</div>
-                <div id="id">500-400-300-200</div>
-                <div id="trip-id">NA</div>
-                <div id="route_id">NA</div>
-                <div id="route_name">NA</div>
-            </div>
-            <!--
+            <div id="sidebar">
+                <div class="cell" id="station-info">
+                    <div id="station_name">Station Name</div>
+                    <div id="station_id">ID</div>
+                    <button onclick="getStationInfo()">View Info</button>
+                </div>
+                <div class="cell" id="train-info">
+                    <div id="headsign">Click a train to view</div>
+                    <div id="id">500-400-300-200</div>
+                    <div id="trip-id">NA</div>
+                    <div id="route_id">NA</div>
+                    <div id="route_name">NA</div>
+                </div>
+                <!--
             <div class="cell">
                 <span class="mdi mdi-clock"></span>
                 <table>
@@ -43,34 +43,38 @@
                 </table>
             </div>
             -->
-            <div class="cell" id="trip-details">
-                <span class="mdi mdi-train"></span>
+                <div class="cell" id="trip-details">
+                    <span class="mdi mdi-train"></span>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Station
-                                <span class="mdi mdi-train"></span>
-                            </th>
-                            <th>Time
-                                <span class="mdi mdi-clock"></span>
-                            </th>
-                            <th>Status
-                                <span class="mdi mdi-status"></span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="train-table-body">
-                        <tr>
-                            <td class="stop-name">Stop Name</td>
-                            <td class="static-time">arrival</td>
-                            <td class="real-time">Time</td>
-                            <td class="status-live">
-                                <span class="mdi mdi-live"></span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>
+                                    Station
+                                    <span class="mdi mdi-train"></span>
+                                </th>
+                                <th>
+                                    Time
+                                    <span class="mdi mdi-clock"></span>
+                                </th>
+                                <th>
+                                    Status
+                                    <span class="mdi mdi-status"></span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="train-table-body">
+                            <tr>
+                                <td class="stop-name">Stop Name</td>
+                                <td class="static-time">arrival</td>
+                                <td class="real-time">Time</td>
+                                <td class="status-live">
+                                    <span class="mdi mdi-live"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div id="info"></div>
