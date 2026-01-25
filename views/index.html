@@ -13,13 +13,32 @@
         <script src="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.js"></script>
     </head>
     <body>
-        {{> navbar }}
         <div class="container">
-                <div class="cell" id="station-info">Loading</div>
-                <div class="cell" id="train-info">Loading</div>
+            <div id="map" class="cell"></div>
 
+            <div class="cell" id="station-info">Loading</div>
+            <div class="cell" id="train-info">
+                <div id="headsign">Headsign</div>
+                <div id="id">500-400-300-200</div>
+                <div id="trip-id">000000</div>
+                <div id="route_id"></div>
+                <div id="route_name"></div>
+            </div>
+            <div class="cell">
+                <span class="mdi mdi-clock"></span>
+                <table>
+                    <tbody id="station-table-body"></tbody>
+                </table>
+            </div>
+            <div class="cell">
+                <span class="mdi mdi-train"></span>
+                <table>
+                    <tbody id="train-table-body"></tbody>
+                </table>
+            </div>
         </div>
-        <div id="map"></div>
+        <div id="info"></div>
+        <table></table>
         <script src="/public/scripts/map.js"></script>
         <script src="/public/scripts/script.js"></script>
     </body>

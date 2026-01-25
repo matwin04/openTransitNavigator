@@ -3,12 +3,10 @@ async function loadRouteColors() {
     const routes = await res.json();
 
     let routeColors = Object.fromEntries(
-        routes.map(r => [
-            r.route_id,
-            r.route_color ? `#${r.route_color}` : "#888888"
-        ])
+        routes.map((r) => [r.route_id, r.route_color ? `#${r.route_color}` : "#888888"])
     );
 }
+
 const map = new maplibregl.Map({
     container: "map",
     style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -18,35 +16,62 @@ const map = new maplibregl.Map({
 function showTrainPopup(e) {
     const f = e.features[0];
     const p = f.properties;
-
-    new maplibregl.Popup()
-        .setLngLat(f.geometry.coordinates)
-        .setHTML(
-            `
-                <span class="mdi mdi-train"></span><br>
-                <b>Vehicle:</b> ${p.id}<br>
-                <b>Route:</b> ${p.route_id}<br>
-                <b>Trip:</b> <a href="/api/trips/${p.trip_id}">${p.tripId}</a><br>
-            `
-        )
-        .addTo(map);
     const train_info = document.getElementById("train-info");
-    train_info.innerHTML = `
-        <span class="mdi mdi-train"></span><br>
-        <b>Vehicle:</b> ${p.id}<br>
-        <b>Route:</b> ${p.route_id}<br>
-        <b>Trip:</b> <a href="/api/trips/${p.trip_id}">${p.tripId}</a><br>
-    `;
+
+    document.getElementById("headsign").textContent = p.headsign;
+    document.getElementById("id").textContent = p.id;
+    document.getElementById("trip-id").textContent = p.trip_id;
+    document.getElementById("route_id").textContent = p.route_id;
+    document.getElementById("route_name").textContent = p.route_long_name;
+    train_info.style.background = p.route_color;
+    train_info.style.color = p.route_text_color;
+}
+async function getDepartureBoard(e) {
+    const f = e.features[0];
+    const p = f.properties;
+    const response = await fetch(`/api/departures?stop_id=${p.stop_id}`);
+    const data = await response.json();
+    console.log(data);
+    const tableBody = document.getElementById("station-table-body");
+    tableBody.innerHTML = "";
+    data.forEach((departure) => {
+        const row = `
+            <tr>
+                <td>${departure.arrival_time}</td>
+                <td>${departure.trip_id}</td>
+                <td>${departure.stop_headsign}</td>
+            </tr>
+        `;
+        tableBody.insertAdjacentHTML("beforeend", row);
+    });
+}
+async function getTripBoard(e) {
+    const f = e.features[0];
+    const p = f.properties;
+    const response = await fetch(`/api/departures?trip_id=${p.trip_id}`);
+    const data = await response.json();
+    console.log(data);
+    const tableBody = document.getElementById("train-table-body");
+    tableBody.innerHTML = "";
+    data.forEach((t) => {
+        const row = `
+            <tr>
+                <td>${t.arrival_time}</td>
+                <td>${t.trip_id}</td>
+                <td>${t.stop_id}</td>
+                <td>${t.stop_headsign}</td>
+            </tr>
+        `;
+        tableBody.insertAdjacentHTML("beforeend", row);
+    });
 }
 function showStopPopup(e) {
     const f = e.features[0];
     const p = f.properties;
     const station_info = document.getElementById("station-info");
     station_info.innerHTML = `
-        <b>${p.stop_name}</b><br>
+        <div class="stop_name">${p.stop_name}</div>
         ${p.stop_id}<br>
-        ${p.location_type}<br>
-        ${p.stop_code}<br>
         
     `;
 }
@@ -66,7 +91,9 @@ function vehiclesToGeoJSON(data) {
                     route_id: v.route_id,
                     trip_id: v.trip_id,
                     timestamp: v.timestamp,
-                    route_color: v.route_color ? v.route_color : null
+                    headsign: v.headsign,
+                    route_color: v.route_color ? v.route_color : null,
+                    route_text_color: v.route_text_color ? v.route_text_color : null
                 }
             }))
     };
@@ -91,7 +118,7 @@ async function loadVehiclesPositions() {
         source: "vehicles",
         paint: {
             "circle-radius": 5,
-            "circle-color":["get", "route_color"],
+            "circle-color": ["get", "route_color"],
             "circle-stroke-color": "#fff",
             "circle-stroke-width": 1
         }
@@ -100,6 +127,7 @@ async function loadVehiclesPositions() {
 map.addControl(new maplibregl.NavigationControl());
 
 map.on("load", () => {
+    loadVehiclesPositions();
     map.addSource("shapes", {
         type: "geojson",
         data: "/api/shapes"
@@ -141,6 +169,8 @@ map.on("load", () => {
 
     map.on("click", "vehicles-layer", showTrainPopup);
     map.on("click", "stops-layer", showStopPopup);
+    map.on("click", "stops-layer", getDepartureBoard);
+    map.on("click", "vehicles-layer", getTripBoard);
     const REFRESH_MS = 10000;
     setInterval(() => {
         if (!map.isStyleLoaded()) return;

@@ -48,6 +48,7 @@ app.set("views", VIEWS_DIR);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "public")));
+app.use("/views", express.static(path.join(__dirname, "views")));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapi));
 
 app.get("/", async (req, res) => {
@@ -159,11 +160,14 @@ app.get("/api/realtime/vehicle_positions", async (req, res) => {
         const vehicle_positions = getVehiclePositions();
         const enriched = vehicle_positions.map(vehicle => {
             const trip = getTrips({ trip_id: vehicle.trip_id })[0];
-            getTrips()
             if (trip) {
+                console.log(trip.trip_id);
                 const route = getRoutes({ route_id: trip.route_id })[0];
+                const stoptimes = getStoptimes({trip_id: trip.trip_id})[0];
+                console.log(stoptimes.stop_headsign);
                 return {
                     ...vehicle,
+                    headsign: stoptimes.stop_headsign,
                     route_id: trip.route_id,
                     route_color: route?.route_color ? `#${route.route_color}` : null,
                     route_text_color: route?.route_text_color ? `#${route.route_text_color}` : null
