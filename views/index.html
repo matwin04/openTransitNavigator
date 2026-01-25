@@ -14,19 +14,11 @@
     </head>
     <body>
         {{> navbar }}
-        <div id="map"></div>
-        <div id="info">
-            <div id="station"></div>
-            <button onclick="loadAgencies()">Agencies</button>
-            <button onclick="loadStations()">Stations</button>
-            <button onclick="loadTrips()">Trips</button>
-            <button onclick="loadVehicles()">Vehicles</button>
-            <button onclick="loadRoutes()">Routes</button>
-            <table>
-                <thead></thead>
-                <tbody id="table-body"></tbody>
-            </table>
+        <div class="fixed-grid has-2-cols">
+            <div class="cell" id="station-info">Loading</div>
+            <div class="cell" id="train-info">Loading</div>
         </div>
+        <div id="map"></div>
         <script src="/public/scripts/map.js"></script>
         <script src="/public/scripts/script.js"></script>
     </body>

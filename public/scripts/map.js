@@ -18,6 +18,7 @@ const map = new maplibregl.Map({
 function showTrainPopup(e) {
     const f = e.features[0];
     const p = f.properties;
+
     new maplibregl.Popup()
         .setLngLat(f.geometry.coordinates)
         .setHTML(
@@ -29,6 +30,25 @@ function showTrainPopup(e) {
             `
         )
         .addTo(map);
+    const train_info = document.getElementById("train-info");
+    train_info.innerHTML = `
+        <span class="mdi mdi-train"></span><br>
+        <b>Vehicle:</b> ${p.id}<br>
+        <b>Route:</b> ${p.route_id}<br>
+        <b>Trip:</b> <a href="/api/trips/${p.trip_id}">${p.tripId}</a><br>
+    `;
+}
+function showStopPopup(e) {
+    const f = e.features[0];
+    const p = f.properties;
+    const station_info = document.getElementById("station-info");
+    station_info.innerHTML = `
+        <b>${p.stop_name}</b><br>
+        ${p.stop_id}<br>
+        ${p.location_type}<br>
+        ${p.stop_code}<br>
+        
+    `;
 }
 function vehiclesToGeoJSON(data) {
     return {
@@ -79,10 +99,6 @@ async function loadVehiclesPositions() {
 }
 map.addControl(new maplibregl.NavigationControl());
 
-function displayStopData() {
-    console.log("Displaying stop data");
-}
-
 map.on("load", () => {
     map.addSource("shapes", {
         type: "geojson",
@@ -123,16 +139,8 @@ map.on("load", () => {
         }
     });
 
-    map.on("click", "stops-layer", (e) => {
-        const f = e.features[0];
-        const p = f.properties;
-        new maplibregl.Popup()
-            .setLngLat(f.geometry.coordinates)
-            .setHTML(`<strong>${p.stop_name}</strong> ${p.stop_id}`)
-            .addTo(map);
-    });
-    map.on("click", "stops-later", displayStopData);
     map.on("click", "vehicles-layer", showTrainPopup);
+    map.on("click", "stops-layer", showStopPopup);
     const REFRESH_MS = 10000;
     setInterval(() => {
         if (!map.isStyleLoaded()) return;
