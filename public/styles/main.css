@@ -32,3 +32,6 @@ html {
 .route_name {
     font-size: 14px;
 }
+table {
+    text-align: center;
+}
