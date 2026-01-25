@@ -12,7 +12,7 @@ dotenv.config();
 import {
     getAgencies, getCalendars, getFareAttributes, getFareMedia, getFareProducts, getFareRules,
     getRoutes, getServiceAlerts, getShapes,
-    getShapesAsGeoJSON,
+    getShapesAsGeoJSON, getStopAttributes,
     getStops,
     getStopsAsGeoJSON,
     getStoptimes,
@@ -159,6 +159,7 @@ app.get("/api/realtime/vehicle_positions", async (req, res) => {
         const vehicle_positions = getVehiclePositions();
         const enriched = vehicle_positions.map(vehicle => {
             const trip = getTrips({ trip_id: vehicle.trip_id })[0];
+            getTrips()
             if (trip) {
                 const route = getRoutes({ route_id: trip.route_id })[0];
                 return {
