@@ -171,7 +171,7 @@ map.on("load", () => {
     map.on("click", "stops-layer", showStopPopup);
     map.on("click", "stops-layer", getDepartureBoard);
     map.on("click", "vehicles-layer", getTripBoard);
-    const REFRESH_MS = 10000;
+    const REFRESH_MS = 30000;
     setInterval(() => {
         if (!map.isStyleLoaded()) return;
         loadVehiclesPositions();

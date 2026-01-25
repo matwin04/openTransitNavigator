@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="55437ce9-b232-49bf-9c37-106ebc09d8c3" name="Changes" comment="OTN Favicon Live">
-      <change beforePath="$PROJECT_DIR$/views/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/scripts/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/scripts/map.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -187,6 +187,7 @@
       <workItem from="1769219396829" duration="4356000" />
       <workItem from="1769281583742" duration="4900000" />
       <workItem from="1769302197979" duration="6227000" />
+      <workItem from="1769312959559" duration="16000" />
     </task>
     <task id="LOCAL-00001" summary="Somewhat working now">
       <option name="closed" value="true" />
