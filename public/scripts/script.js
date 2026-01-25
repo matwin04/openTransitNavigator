@@ -9,7 +9,11 @@ async function loadAgencies() {
         data.forEach((agency) => {
             const row = `
             <tr>
-                <td>${agency.agency_id}</td>
+                <td>
+                    ${agency.agency_id}
+                    <button onclick="loadRoutes(${agency.agency_id})"
+                </td>
+                
                 <td>${agency.agency_name}</td>
                 <td><a href="${agency.agency_url}" target="_blank">${agency.agency_url}</a></td>
                 <td>${agency.agency_timezone}</td>
