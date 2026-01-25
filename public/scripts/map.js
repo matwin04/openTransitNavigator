@@ -1,5 +1,3 @@
-
-loadVehiclesPositions();
 async function loadRouteColors() {
     const res = await fetch("/api/routes");
     const routes = await res.json();
