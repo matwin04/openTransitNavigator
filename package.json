@@ -13,6 +13,7 @@
   "type": "module",
   "dependencies": {
     "amtrak": "^3.0.13",
+    "better-sqlite3": "^12.6.2",
     "bulma": "^1.0.4",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",

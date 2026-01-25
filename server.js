@@ -3,6 +3,7 @@ import path from "path";
 import dotenv from "dotenv";
 import { engine } from "express-handlebars";
 import { fileURLToPath } from "url";
+import Database from "better-sqlite3";
 
 import fetch from "node-fetch";
 import swaggerUi from "swagger-ui-express";
@@ -17,7 +18,7 @@ import {
     getStopsAsGeoJSON,
     getStoptimes,
     getStopTimeUpdates, getTimetables, getTrips, getTripUpdates, getVehiclePositions,
-    importGtfs, updateGtfsRealtime
+    importGtfs, openDb, updateGtfsRealtime
 } from 'gtfs';
 import {agency, trips} from "gtfs/models";
 
@@ -35,6 +36,7 @@ const openapi = JSON.parse(
 const GTFSCFG = JSON.parse(
     await fs.readFile(new URL('./config.json',import.meta.url), "utf8")
 );
+const db = openDb(GTFSCFG);
 const overview = JSON.parse(
     await fs.readFile(new URL("./overview.json",import.meta.url), "utf8")
 );
@@ -108,7 +110,6 @@ app.get("/api/departures", (req, res) => {
         ...(stop_id && { stop_id }),
         ...(trip_id && { trip_id })
     });
-
     res.json(stoptimes);
 });
 app.get("/api/calendar", (req, res) => {
@@ -145,13 +146,19 @@ app.get("/api/realtime/alerts",async (req, res) => {
     res.json(service_alerts);
 });
 app.get("/api/realtime/trip_updates", async (req, res) => {
-    await updateGtfsRealtime(GTFSCFG)
-    const trip_updates = getTripUpdates();
+    await updateGtfsRealtime(GTFSCFG);
+    const {trip_id} = req.query;
+    const trip_updates = trip_id
+        ? getTripUpdates({trip_id})
+        : getTripUpdates();
     res.json(trip_updates);
 });
 app.get("/api/realtime/stop_time_updates", async (req, res) => {
-    await updateGtfsRealtime(GTFSCFG)
-    const stop_time_updates = getStopTimeUpdates();
+    await updateGtfsRealtime(GTFSCFG);
+    const {trip_id} = req.query;
+    const stop_time_updates = trip_id
+        ? getStopTimeUpdates({trip_id})
+        : getStopTimeUpdates();
     res.json(stop_time_updates);
 });
 app.get("/api/realtime/vehicle_positions", async (req, res) => {
@@ -163,6 +170,7 @@ app.get("/api/realtime/vehicle_positions", async (req, res) => {
             if (trip) {
                 const route = getRoutes({ route_id: trip.route_id })[0];
                 const stoptimes = getStoptimes({trip_id: trip.trip_id})[0];
+                const stoptime_updates = getTripUpdates({trip_id: trip.trip_id})[0];
                 return {
                     ...vehicle,
                     headsign: stoptimes.stop_headsign,

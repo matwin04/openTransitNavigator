@@ -1,3 +1,4 @@
+
 async function loadRouteColors() {
     const res = await fetch("/api/routes");
     const routes = await res.json();
@@ -30,6 +31,7 @@ async function getDepartureBoard(e) {
     const f = e.features[0];
     const p = f.properties;
     const response = await fetch(`/api/departures?stop_id=${p.stop_id}`);
+
     const data = await response.json();
     console.log(data);
     const tableBody = document.getElementById("station-table-body");
@@ -45,25 +47,62 @@ async function getDepartureBoard(e) {
         tableBody.insertAdjacentHTML("beforeend", row);
     });
 }
+
+async function getStationName(stop_id) {
+     const response = await fetch(`/api/stops?stop_id=${stop_id}`);
+     const data = await response.json();
+     console.log(data[0].stop_name);
+     return data[0].stop_name;
+}
+
 async function getTripBoard(e) {
-    const f = e.features[0];
-    const p = f.properties;
-    const response = await fetch(`/api/departures?trip_id=${p.trip_id}`);
-    const data = await response.json();
-    console.log(data);
+    const { trip_id } = e.features[0].properties;
     const tableBody = document.getElementById("train-table-body");
-    tableBody.innerHTML = "";
-    data.forEach((t) => {
-        const row = `
-            <tr>
-                <td>${t.arrival_time}</td>
-                <td>${t.trip_id}</td>
-                <td>${t.stop_id}</td>
-                <td>${t.stop_headsign}</td>
-            </tr>
-        `;
-        tableBody.insertAdjacentHTML("beforeend", row);
-    });
+    const time_options = {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+    }
+    try {
+        const [staticRes, realtimeRes] = await Promise.all([
+            fetch(`/api/departures?trip_id=${trip_id}`),
+            fetch(`/api/realtime/stop_time_updates?trip_id=${trip_id}`)
+        ]);
+        const staticData = await staticRes.json();
+        const realtimeData = await realtimeRes.json();
+        const now = Date.now();
+        tableBody.innerHTML = "";
+
+        for (const st of staticData) {
+            const rt = realtimeData.find(update => update.stop_id === st.stop_id);
+
+            const dateObj = new Date(rt?.arrival_timestamp * 1000);
+            const name = await getStationName(stop_id);
+            console.log(`NAME:${name.stop_name}`);
+            const formated_timestamp = dateObj.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true,
+            });
+            const row = `
+                <tr>
+                    <td>${name}</td>
+                    <td>${st.stop_id}</td>
+                    <td>${st.arrival_time || 'N/A'}</td> 
+                    <td>${formated_timestamp || 'No Update'}</td>
+                    <td class="${rt ? 'status-live' : 'status-scheduled'}">
+                        ${rt ? 'Live' : 'Scheduled'}
+                    </td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML("beforeend", row);
+        }
+
+    } catch (err) {
+        console.error("Error loading trip board:", err);
+    }
 }
 function showStopPopup(e) {
     const f = e.features[0];

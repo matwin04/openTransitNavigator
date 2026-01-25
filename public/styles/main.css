@@ -37,3 +37,6 @@ table {
     text-align: center;
     border-collapse: collapse;
 }
+.status-live {
+    color: green;
+}
