@@ -41,8 +41,6 @@ const overview = JSON.parse(
 console.log(overview)
 await importGtfs(GTFSCFG);
 
-await updateGtfsRealtime(GTFSCFG)
-
 app.engine("html", engine({ extname: ".html", defaultLayout: false, partialsDir: PARTIALS_DIR }));
 app.set("view engine", "html");
 app.set("views", VIEWS_DIR);
